@@ -22,10 +22,24 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@core": ["libs/core/src"],
-      "@core/*": ["libs/core/src/*"],
-      "@shared": ["libs/shared/src"],
-      "@shared/*": ["libs/shared/src/*"]
+      "@core": [
+        "libs/core/src"
+      ],
+      "@core/*": [
+        "libs/core/src/*"
+      ],
+      "@lib/mongo": [
+        "libs/mongo/src"
+      ],
+      "@lib/mongo/*": [
+        "libs/mongo/src/*"
+      ],
+      "@shared": [
+        "libs/shared/src"
+      ],
+      "@shared/*": [
+        "libs/shared/src/*"
+      ]
     }
   }
 }
