@@ -1,4 +1,5 @@
-import { FilterQuery, HydratedDocument, Types } from 'mongoose';
+import { Document, FilterQuery, HydratedDocument, Types } from 'mongoose';
+
 import { MongoSchema } from '../utils/schema';
 
 /**
@@ -44,8 +45,42 @@ export interface DefaultSchemaStaticMethods<T> {
   ): Promise<unknown>;
 }
 
+/**
+ * Composite type that combines Mongoose Document with MongoSchema base fields,
+ * custom type T, and default schema methods for a fully-featured document type.
+ *
+ * @template T - The custom schema interface or class
+ * @example
+ * ```typescript
+ * interface User {
+ *   name: string;
+ *   email: string;
+ * }
+ *
+ * type UserDocument = MongoDocument<User>;
+ * // Results in: Document & MongoSchema & User & DefaultSchemaMethods
+ * ```
+ */
 export type MongoDocument<T> = Document &
   MongoSchema &
   T &
   DefaultSchemaMethods;
+
+/**
+ * Wrapper type for hydrated MongoDB documents with full type safety.
+ * Provides a more convenient alias for working with hydrated documents
+ * that include all base schema functionality.
+ *
+ * @template T - The custom schema interface or class
+ * @example
+ * ```typescript
+ * interface User {
+ *   name: string;
+ *   email: string;
+ * }
+ *
+ * type UserModel = ModelWrap<User>;
+ * // Results in: HydratedDocument<MongoDocument<User>>
+ * ```
+ */
 export type ModelWrap<T> = HydratedDocument<MongoDocument<T>>;

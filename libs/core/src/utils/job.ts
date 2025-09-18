@@ -1,59 +1,71 @@
+// JobResponse interface represents the structure of a response for a job operation.
 export interface JobResponse<T = unknown> {
   /**
    * Error object or string
    */
   error?: unknown;
+
   /**
    * Error code
    */
   errorCode?: number;
+
   /**
    * Response data
    */
   data?: T;
+
   /**
    * Response success or error message
    */
   message?: string;
 }
 
+// Job interface represents the structure of a job with various properties.
 export interface Job<T = unknown> {
   /**
-   * source app
+   * Source application initiating the job
    */
   app?: string;
+
   /**
-   * job unique id
+   * Unique identifier for the job
    */
   uid?: string;
+
   /**
-   * user or owner object on behave this job is running
+   * User or owner object on behalf of which this job is running
    */
   owner?: Record<string, unknown>;
+
   /**
-   * action performing using this job
+   * Action being performed using this job
    */
   action?: string;
+
   /**
-   * files object used for upload
+   * Files object used for upload
    */
   files?: Record<string, File[]>;
+
   /**
-   * additional parameters used in services
+   * Additional parameters used in services
    */
   payload?: T | Record<string, unknown>;
+
   /**
    * Error object or string
    */
   error?: unknown;
+
   /**
-   * Log to JobLogs while running as micro service task
+   * Log to JobLogs while running as a microservice task
    * @default true
    */
   logging?: boolean;
+
   /**
    * Status of the job
-   *
    * @default Pending
    */
   status?: 'Pending' | 'Completed' | 'Errored';
