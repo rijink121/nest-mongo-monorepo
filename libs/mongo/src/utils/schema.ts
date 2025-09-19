@@ -244,7 +244,7 @@ export class MongoSchema {
     readOnly: true,
   })
   /** ID of the user who last updated this document */
-  updated_by: number | Types.ObjectId;
+  updated_by: number | string | Types.ObjectId;
 
   @Prop({
     type: Boolean,
@@ -275,5 +275,5 @@ export class MongoSchema {
     readOnly: true,
   })
   /** ID of the user who soft deleted this document */
-  deleted_by: number | Types.ObjectId;
+  deleted_by: number | string | Types.ObjectId;
 }

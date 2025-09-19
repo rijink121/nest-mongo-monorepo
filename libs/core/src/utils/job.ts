@@ -36,7 +36,7 @@ export interface Job<T = unknown> {
   /**
    * User or owner object on behalf of which this job is running
    */
-  owner?: Record<string, unknown>;
+  owner?: { id: string } & Record<string, unknown>;
 
   /**
    * Action being performed using this job

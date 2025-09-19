@@ -1,4 +1,10 @@
-import { Document, FilterQuery, HydratedDocument, Types } from 'mongoose';
+import {
+  Document,
+  FilterQuery,
+  HydratedDocument,
+  MongooseBaseQueryOptions,
+  Types,
+} from 'mongoose';
 
 import { MongoSchema } from '../utils/schema';
 
@@ -10,7 +16,7 @@ export interface DeleteOptions {
   /** Force permanent deletion (hard delete) */
   force?: boolean;
   /** ID of the user who performed the deletion */
-  deletedBy?: number | Types.ObjectId;
+  deletedBy?: number | string | Types.ObjectId;
 }
 
 /**
@@ -19,7 +25,7 @@ export interface DeleteOptions {
  */
 export interface RestoreOptions {
   /** ID of the user who performed the restoration */
-  restoredBy?: number | Types.ObjectId;
+  restoredBy?: number | string | Types.ObjectId;
 }
 
 /**
@@ -83,4 +89,8 @@ export type MongoDocument<T> = Document &
  * // Results in: HydratedDocument<MongoDocument<User>>
  * ```
  */
-export type ModelWrap<T> = HydratedDocument<MongoDocument<T>>;
+export type ModelWrap<T> = HydratedDocument<T>;
+
+export interface SoftDeleteQueryOptions extends MongooseBaseQueryOptions {
+  withDeleted?: boolean;
+}
