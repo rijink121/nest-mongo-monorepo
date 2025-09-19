@@ -19,28 +19,28 @@ export class ProductController {
   @Post()
   @Apps('main')
   create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+    return this.productService.create({ body: { ...createProductDto } });
   }
 
   @Get()
   findAll() {
-    return this.productService.findAll();
+    return this.productService.findAll({});
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productService.findOne(id);
+    return this.productService.findOne({ id });
   }
 
   @Patch(':id')
   @Apps('main')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id, updateProductDto);
+    return this.productService.update({ id, body: { ...updateProductDto } });
   }
 
   @Delete(':id')
   @Apps('main')
   remove(@Param('id') id: string) {
-    return this.productService.remove(id);
+    return this.productService.delete({ id });
   }
 }

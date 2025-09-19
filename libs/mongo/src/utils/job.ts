@@ -91,6 +91,14 @@ export interface MongoGetOneResponse<M> extends JobResponse {
   data?: ModelWrap<M> | null;
 }
 
+// MongoGetOneResponse interface extends JobResponse and defines the structure for single record responses
+export interface MongoDeleteOneResponse<M> extends JobResponse {
+  /**
+   * Response data
+   */
+  data?: ModelWrap<M>;
+}
+
 // MongoGetAllResponse interface extends JobResponse and defines the structure for multiple record responses
 export interface MongoGetAllResponse<M> extends JobResponse {
   /**

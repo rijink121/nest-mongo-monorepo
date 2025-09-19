@@ -16,6 +16,7 @@ import {
   MongoCountResponse,
   MongoCreateBulkResponse,
   MongoCreateResponse,
+  MongoDeleteOneResponse,
   MongoDeleteResponse,
   MongoGetAllResponse,
   MongoGetOneResponse,
@@ -615,7 +616,7 @@ export class MongoService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
-  async deleteRecord(job: MongoJob<M>): Promise<MongoGetOneResponse<M>> {
+  async deleteRecord(job: MongoJob<M>): Promise<MongoDeleteOneResponse<M>> {
     try {
       const { id, pk = '_id', options = {}, owner } = job;
       if (!id) return { error: 'Error calling deleteRecord - id is missing' };
