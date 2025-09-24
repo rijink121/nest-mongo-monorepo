@@ -184,4 +184,10 @@ export interface MongoJob<M extends MongoSchema> extends Job {
    * parameters for mongo
    */
   options?: MongoJobOptions<M>;
+
+  /**
+   * flag to save to history
+   * @default true
+   */
+  history?: boolean;
 }

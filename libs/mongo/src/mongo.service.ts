@@ -93,7 +93,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async createRecord(job: MongoJob<M>): Promise<MongoCreateResponse<M>> {
     try {
-      const { body, owner, options = {} } = job;
+      const { body, owner, options = {}, history = true } = job;
       if (typeof body === 'undefined')
         return {
           error: 'Error calling createRecord - body is missing',
@@ -105,7 +105,7 @@ export class MongoService<M extends MongoSchema> {
       }
       await data.save();
 
-      if (this.options.history) {
+      if (this.options.history && history) {
         // Create history
         this.addToHistory({
           entity_id: data._id,
@@ -135,7 +135,7 @@ export class MongoService<M extends MongoSchema> {
     job: MongoJob<M>,
   ): Promise<MongoCreateBulkResponse<M>> {
     try {
-      const { records = [], owner, options = {} } = job;
+      const { records = [], owner, options = {}, history = true } = job;
       if (!records.length)
         return {
           error: 'Error calling createBulkRecord - records are missing',
@@ -148,7 +148,7 @@ export class MongoService<M extends MongoSchema> {
       }
       const data = await this.model.create(records, options);
 
-      if (this.options.history) {
+      if (this.options.history && history) {
         data.forEach((item) => {
           this.addToHistory({
             entity_id: item._id,
@@ -173,7 +173,14 @@ export class MongoService<M extends MongoSchema> {
    */
   async updateRecord(job: MongoJob<M>): Promise<MongoUpdateResponse<M>> {
     try {
-      const { id, body = {}, owner, pk = '_id', options = {} } = job;
+      const {
+        id,
+        body = {},
+        owner,
+        pk = '_id',
+        options = {},
+        history = true,
+      } = job;
       if (!id) return { error: 'Error calling updateRecord - id is missing' };
       if (typeof body === 'undefined')
         return {
@@ -199,7 +206,7 @@ export class MongoService<M extends MongoSchema> {
       }
       await data.save();
 
-      if (this.options.history) {
+      if (this.options.history && history) {
         this.addToHistory({
           entity_id: data._id,
           action: 'update',
@@ -226,7 +233,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async findAndUpdateRecord(job: MongoJob<M>): Promise<MongoUpdateResponse<M>> {
     try {
-      const { body, owner, options = {} } = job;
+      const { body, owner, options = {}, history = true } = job;
       if (typeof body === 'undefined')
         return {
           error: 'Error calling findAndUpdateRecord - body is missing',
@@ -248,7 +255,7 @@ export class MongoService<M extends MongoSchema> {
       }
       await data.save();
 
-      if (this.options.history) {
+      if (this.options.history && history) {
         this.addToHistory({
           entity_id: data._id,
           action: 'update',
@@ -396,7 +403,14 @@ export class MongoService<M extends MongoSchema> {
    */
   async addSubDocument(job: MongoJob<M>): Promise<MongoUpdateResponse<M>> {
     try {
-      const { id, pk = '_id', body = {}, options = {}, owner } = job;
+      const {
+        id,
+        pk = '_id',
+        body = {},
+        options = {},
+        history = true,
+        owner,
+      } = job;
       if (!id) return { error: 'Error calling addSubDocument - id is missing' };
       const { subDocumentField, where = {}, projection, populate } = options;
       if (!subDocumentField)
@@ -420,7 +434,7 @@ export class MongoService<M extends MongoSchema> {
       }
       await data.save();
 
-      if (this.options.history) {
+      if (this.options.history && history) {
         this.addToHistory({
           entity_id: data._id,
           action: 'update',
@@ -446,7 +460,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async removeSubDocument(job: MongoJob<M>): Promise<MongoUpdateResponse<M>> {
     try {
-      const { id, pk = '_id', options = {}, owner } = job;
+      const { id, pk = '_id', options = {}, history = true, owner } = job;
       if (!id)
         return { error: 'Error calling removeSubDocument - id is missing' };
       const {
@@ -484,7 +498,7 @@ export class MongoService<M extends MongoSchema> {
       }
       await data.save();
 
-      if (this.options.history) {
+      if (this.options.history && history) {
         this.addToHistory({
           entity_id: data._id,
           action: 'update',
@@ -510,7 +524,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async findOrCreate(job: MongoJob<M>): Promise<MongoCreateResponse<M>> {
     try {
-      const { body = {}, options = {}, owner } = job;
+      const { body = {}, options = {}, history = true, owner } = job;
       if (typeof body === 'undefined')
         return {
           error: 'Error calling findOrCreate - body is missing',
@@ -531,7 +545,7 @@ export class MongoService<M extends MongoSchema> {
         await data.save();
         created = true;
 
-        if (this.options.history) {
+        if (this.options.history && history) {
           this.addToHistory({
             entity_id: data._id,
             action: 'create',
@@ -555,7 +569,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async createOrUpdate(job: MongoJob<M>): Promise<MongoCreateResponse<M>> {
     try {
-      const { body = {}, options = {}, owner } = job;
+      const { body = {}, options = {}, history = true, owner } = job;
       if (typeof body === 'undefined')
         return {
           error: 'Error calling createOrUpdate - body is missing',
@@ -577,7 +591,7 @@ export class MongoService<M extends MongoSchema> {
           data.set('updated_by', owner.id);
         }
         await data.save();
-        if (this.options.history) {
+        if (this.options.history && history) {
           this.addToHistory({
             entity_id: data._id,
             action: 'update',
@@ -595,7 +609,7 @@ export class MongoService<M extends MongoSchema> {
         await data.save();
         created = true;
 
-        if (this.options.history) {
+        if (this.options.history && history) {
           this.addToHistory({
             entity_id: data._id,
             action: 'create',
@@ -618,7 +632,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async deleteRecord(job: MongoJob<M>): Promise<MongoDeleteOneResponse<M>> {
     try {
-      const { id, pk = '_id', options = {}, owner } = job;
+      const { id, pk = '_id', options = {}, owner, history = true } = job;
       if (!id) return { error: 'Error calling deleteRecord - id is missing' };
       const { where = {}, hardDelete = false } = options;
       const data = await this.model.findOne(
@@ -644,7 +658,7 @@ export class MongoService<M extends MongoSchema> {
           data: data.toJSON(),
           created_by: owner?.id,
         });
-      } else if (this.options.history) {
+      } else if (this.options.history && history) {
         this.addToHistory({
           entity_id: data._id,
           action: 'delete',
@@ -666,7 +680,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async findAndDeleteRecord(job: MongoJob<M>): Promise<MongoDeleteResponse<M>> {
     try {
-      const { options = {}, owner } = job;
+      const { options = {}, owner, history = true } = job;
       if (typeof options.where === 'undefined')
         return {
           error: 'Error calling findAndDeleteRecord - options.where is missing',
@@ -688,7 +702,7 @@ export class MongoService<M extends MongoSchema> {
           data: data.toJSON(),
           created_by: owner?.id,
         });
-      } else if (this.options.history) {
+      } else if (this.options.history && history) {
         this.addToHistory({
           entity_id: data._id,
           action: 'delete',
@@ -733,7 +747,7 @@ export class MongoService<M extends MongoSchema> {
    */
   async restoreRecord(job: MongoJob<M>): Promise<MongoGetOneResponse<M>> {
     try {
-      const { id, pk = '_id', options = {}, owner } = job;
+      const { id, pk = '_id', options = {}, owner, history = true } = job;
       if (!id) return { error: 'Error calling restoreRecord - id is missing' };
       const { where = {} } = options;
       const data = await this.model.findOne({ ...where, [pk]: id }, null, {
@@ -745,7 +759,7 @@ export class MongoService<M extends MongoSchema> {
         restoredBy: owner?.id,
       });
 
-      if (this.options.history) {
+      if (this.options.history && history) {
         this.addToHistory({
           entity_id: data._id,
           action: 'restore',

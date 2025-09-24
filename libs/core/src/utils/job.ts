@@ -51,7 +51,7 @@ export interface Job<T = unknown> {
   /**
    * Additional parameters used in services
    */
-  payload?: T | Record<string, unknown>;
+  payload?: T;
 
   /**
    * Error object or string
