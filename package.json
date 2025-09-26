@@ -29,6 +29,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
+    "@nestjs/microservices": "^11.1.6",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.0",
@@ -37,6 +38,7 @@
     "moment-timezone": "^0.6.0",
     "mongoose": "^8.18.1",
     "nestjs-cls": "^6.0.1",
+    "pluralize-esm": "^9.0.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

@@ -1,3 +1,5 @@
+import { OwnerDto } from '@core/types/owner';
+
 // JobResponse interface represents the structure of a response for a job operation.
 export interface JobResponse<T = unknown> {
   /**
@@ -36,7 +38,7 @@ export interface Job<T = unknown> {
   /**
    * User or owner object on behalf of which this job is running
    */
-  owner?: { id: string } & Record<string, unknown>;
+  owner?: OwnerDto;
 
   /**
    * Action being performed using this job
