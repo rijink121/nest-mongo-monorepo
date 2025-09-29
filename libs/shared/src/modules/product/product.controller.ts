@@ -7,6 +7,7 @@ import {
   ResponseGetOne,
   ResponseUpdated,
 } from '@core/decorators/api';
+import { Cache } from '@core/decorators/cache';
 import { Owner } from '@core/decorators/owner';
 import {
   ApiQueryCountAll,
@@ -50,6 +51,7 @@ const entity = snakeCase(Product.name);
 @ApiBearerAuth()
 @ApiErrorResponses()
 @ApiExtraModels(Product)
+@Cache()
 @Controller(entity)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
