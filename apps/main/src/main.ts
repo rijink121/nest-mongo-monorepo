@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, urlencoded } from 'express';
+import morgan from 'morgan';
 import { APP_NAME } from './app.config';
 import { AppModule } from './app.module';
 
@@ -15,6 +16,8 @@ async function bootstrap() {
 
   // Swagger documentation setup in non-production environment
   if (process.env.NODE_ENV !== 'production') {
+    /* Morgan logger in non-production env */
+    app.use(morgan('tiny'));
     /* Swagger documentation */
     const SwaggerConfig = new DocumentBuilder()
       .setTitle('My App')
