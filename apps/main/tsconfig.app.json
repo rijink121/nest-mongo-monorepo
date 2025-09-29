@@ -4,6 +4,10 @@
     "declaration": false,
     "outDir": "../../dist/apps/main"
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "../../libs/core/src/types/**/*.d.ts",
+    "../../libs/shared/src/types/**/*.d.ts"
+  ],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
