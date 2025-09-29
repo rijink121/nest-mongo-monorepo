@@ -4,6 +4,7 @@ import { ClsModule } from 'nestjs-cls';
 import { join } from 'path';
 import { CoreService } from './core.service';
 import { AppConfigModule } from './modules/app-config/app-config.module';
+import { CachingModule } from './modules/caching/caching.module';
 
 @Module({})
 export class CoreModule {
@@ -22,6 +23,7 @@ export class CoreModule {
             mount: true,
           },
         }),
+        CachingModule,
       ],
       providers: [CoreService],
       exports: [CoreService],
