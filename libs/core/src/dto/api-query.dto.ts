@@ -2,7 +2,7 @@ import {
   IsStringOrStringArray,
   IsValidScope,
   IsValidWhere,
-} from '@core/decorators/validation';
+} from '@core/decorators/validation.decorator';
 import { transformJSON } from '@core/utils';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';

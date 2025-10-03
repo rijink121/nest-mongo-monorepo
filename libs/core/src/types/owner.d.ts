@@ -2,7 +2,7 @@
 export interface OwnerDto {
   id: string;
   sessionId: string;
-  userId: number;
+  userId: string;
   iat: number;
   exp: number;
   info?: Record<string, unknown>;

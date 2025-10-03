@@ -39,38 +39,38 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
-import { ProductService } from './product.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+import { UserService } from './user.service';
 
 // Entity name in snake_case for consistent API routes and documentation
-const entity = snakeCase(Product.name);
+const entity = snakeCase(User.name);
 
 @ApiTags(entity)
 @ApiBearerAuth()
 @ApiErrorResponses()
-@ApiExtraModels(Product)
+@ApiExtraModels(User)
 @Cache()
 @Controller(entity)
-export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   /**
    * Create a new entity document
    */
   @Post()
   @ApiOperation({ summary: `Create new ${entity}` })
-  @ResponseCreated(Product)
+  @ResponseCreated(User)
   async create(
     @Owner() owner: OwnerDto,
-    @Body() createProductDto: CreateProductDto,
+    @Body() createUserDto: CreateUserDto,
     @Query() query: ApiQueryCreate,
   ) {
-    const { error, data } = await this.productService.create({
+    const { error, data } = await this.userService.create({
       owner,
       action: 'create',
-      body: { ...createProductDto },
+      body: { ...createUserDto },
       payload: { ...query },
     });
 
@@ -88,18 +88,18 @@ export class ProductController {
    */
   @Put(':id')
   @ApiOperation({ summary: `Update ${entity} using id` })
-  @ResponseUpdated(Product)
+  @ResponseUpdated(User)
   async update(
     @Owner() owner: OwnerDto,
     @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
+    @Body() updateUserDto: UpdateUserDto,
     @Query() query: ApiQueryUpdate,
   ) {
-    const { error, data } = await this.productService.update({
+    const { error, data } = await this.userService.update({
       owner,
       action: 'update',
       id,
-      body: { ...updateProductDto },
+      body: { ...updateUserDto },
       payload: { ...query },
     });
 
@@ -120,10 +120,10 @@ export class ProductController {
    */
   @Get()
   @ApiOperation({ summary: `Get all ${pluralizeString(entity)}` })
-  @ResponseGetAll(Product)
+  @ResponseGetAll(User)
   async findAll(@Owner() owner: OwnerDto, @Query() query: ApiQueryGetAll) {
     const { error, data, offset, limit, count } =
-      await this.productService.findAll({
+      await this.userService.findAll({
         owner,
         action: 'findAll',
         payload: { ...query },
@@ -147,7 +147,7 @@ export class ProductController {
   @ApiOperation({ summary: `Get count of ${pluralizeString(entity)}` })
   @ResponseCountAll()
   async countAll(@Owner() owner: OwnerDto, @Query() query: ApiQueryCountAll) {
-    const { error, count } = await this.productService.getCount({
+    const { error, count } = await this.userService.getCount({
       owner,
       action: 'getCount',
       payload: { ...query },
@@ -169,9 +169,9 @@ export class ProductController {
    */
   @Get('find')
   @ApiOperation({ summary: `Find one ${entity}` })
-  @ResponseGetOne(Product)
+  @ResponseGetOne(User)
   async findOne(@Owner() owner: OwnerDto, @Query() query: ApiQueryGetOne) {
-    const { error, data } = await this.productService.findOne({
+    const { error, data } = await this.userService.findOne({
       owner,
       action: 'findOne',
       payload: { ...query },
@@ -193,13 +193,13 @@ export class ProductController {
    */
   @Get(':id')
   @ApiOperation({ summary: `Find ${entity} using id` })
-  @ResponseGetOne(Product)
+  @ResponseGetOne(User)
   async findById(
     @Owner() owner: OwnerDto,
     @Param('id') id: string,
     @Query() query: ApiQueryGetById,
   ) {
-    const { error, data } = await this.productService.findById({
+    const { error, data } = await this.userService.findById({
       owner,
       action: 'findById',
       id,
@@ -222,13 +222,13 @@ export class ProductController {
    */
   @Delete(':id')
   @ApiOperation({ summary: `Delete ${entity} using id` })
-  @ResponseDeleted(Product)
+  @ResponseDeleted(User)
   async delete(
     @Owner() owner: OwnerDto,
     @Param('id') id: string,
     @Query() query: ApiQueryDelete,
   ) {
-    const { error, data } = await this.productService.delete({
+    const { error, data } = await this.userService.delete({
       owner,
       action: 'delete',
       id,

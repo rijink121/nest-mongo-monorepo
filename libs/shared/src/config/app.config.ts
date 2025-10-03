@@ -24,7 +24,7 @@ import { AppEngine, SqlDialect } from '@shared/constants/app.contants';
  * ```
  */
 export const defaultEngine: AppEngine =
-  (process.env.APP_ENGINE as AppEngine) || AppEngine.SQL;
+  (process.env.APP_ENGINE as AppEngine) || AppEngine.Mongo;
 
 /**
  * Default SQL database dialect when using SQL engine.

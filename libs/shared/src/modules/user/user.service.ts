@@ -1,16 +1,16 @@
 import { ModelService, MongoService, SearchFields } from '@lib/mongo';
 import { Injectable } from '@nestjs/common';
-import { Product } from './entities/product.entity';
+import { User } from './entities/user.entity';
 
 @Injectable()
-export class ProductService extends ModelService<Product> {
+export class UserService extends ModelService<User> {
   /**
    * searchFields
    * @property array of fields to include in search
    */
-  searchFields: SearchFields<Product> = ['name'];
+  searchFields: SearchFields<User> = ['name'];
 
-  constructor(db: MongoService<Product>) {
+  constructor(db: MongoService<User>) {
     super(db);
   }
 }

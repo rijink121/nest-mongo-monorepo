@@ -1,5 +1,6 @@
 import moment from 'moment-timezone';
 import pluralize from 'pluralize-esm';
+import { v1 as uuidv1 } from 'uuid';
 /**
  * Adds the specified number of days to the current date.
  *
@@ -72,3 +73,9 @@ export const snakeCase = (str: string): string =>
     .split(/(?=[A-Z])/)
     .join('_')
     .toLowerCase();
+
+export const isPrimaryInstance = (): boolean =>
+  typeof process.env.NODE_APP_INSTANCE === 'undefined' ||
+  process.env.NODE_APP_INSTANCE === '0';
+
+export const uuid = (): string => uuidv1();

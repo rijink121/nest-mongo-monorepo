@@ -1,9 +1,11 @@
+import { MongoModule } from '@lib/mongo';
 import { Module } from '@nestjs/common';
+import { Trash, TrashSchema } from './entities/trash.entity';
 import { TrashService } from './trash.service';
-import { TrashController } from './trash.controller';
 
 @Module({
-  controllers: [TrashController],
+  imports: [MongoModule.register({ name: Trash.name, schema: TrashSchema })],
   providers: [TrashService],
+  exports: [TrashService],
 })
 export class TrashModule {}
