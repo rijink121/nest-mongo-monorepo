@@ -3,6 +3,7 @@ import {
   ValidationOptions,
   registerDecorator,
 } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 /**
  * Custom validator to check if a value is equal to another property value.
  *
@@ -28,9 +29,7 @@ export function IsEqual(
       propertyName: propertyName,
       constraints: [property],
       options: {
-        message: ({ property, constraints: [targetField] }) => {
-          return `${property} should be equal to ${targetField}`;
-        },
+        message: i18nValidationMessage('validation.isEqual'),
         ...validationOptions,
       },
       validator: {
@@ -63,9 +62,7 @@ export function IsNotEqual(
       propertyName: propertyName,
       constraints: [property],
       options: {
-        message: ({ property, constraints: [targetField] }) => {
-          return `${property} should not be equal to ${targetField}`;
-        },
+        message: i18nValidationMessage('validation.isNotEqual'),
         ...validationOptions,
       },
       validator: {
@@ -99,9 +96,7 @@ export function IsGreaterThan(
       propertyName: propertyName,
       constraints: [property],
       options: {
-        message: ({ property, constraints: [targetField] }) => {
-          return `${property} should be greater than ${targetField}`;
-        },
+        message: i18nValidationMessage('validation.isGreaterThan'),
         ...validationOptions,
       },
       validator: {
@@ -143,9 +138,7 @@ export function IsGreaterThanEqual(
       propertyName: propertyName,
       constraints: [property],
       options: {
-        message: ({ property, constraints: [targetField] }) => {
-          return `${property} should be greater than or equal to ${targetField}`;
-        },
+        message: i18nValidationMessage('validation.isGreaterThanEqual'),
         ...validationOptions,
       },
       validator: {
@@ -187,9 +180,7 @@ export function IsLessThan(
       propertyName: propertyName,
       constraints: [property],
       options: {
-        message: ({ property, constraints: [targetField] }) => {
-          return `${property} should be less than ${targetField}`;
-        },
+        message: i18nValidationMessage('validation.isLessThan'),
         ...validationOptions,
       },
       validator: {
@@ -231,9 +222,7 @@ export function IsLessThanEqual(
       propertyName: propertyName,
       constraints: [property],
       options: {
-        message: ({ property, constraints: [targetField] }) => {
-          return `${property} should be less than or equal to ${targetField}`;
-        },
+        message: i18nValidationMessage('validation.isLessThanEqual'),
         ...validationOptions,
       },
       validator: {
@@ -269,7 +258,10 @@ export function IsValidScope(validationOptions?: ValidationOptions) {
       name: 'isValidScope',
       target: object.constructor,
       propertyName,
-      options: validationOptions,
+      options: {
+        message: i18nValidationMessage('validation.isValidScope'),
+        ...validationOptions,
+      },
       validator: {
         validate(value: unknown[]) {
           if (!Array.isArray(value)) return false;
@@ -287,9 +279,6 @@ export function IsValidScope(validationOptions?: ValidationOptions) {
                   )),
           );
         },
-        defaultMessage(args: ValidationArguments) {
-          return `${args.property} must be in valid format`;
-        },
       },
     });
   };
@@ -306,7 +295,10 @@ export function IsStringOrStringArray(validationOptions?: ValidationOptions) {
       name: 'isStringOrStringArray',
       target: object.constructor,
       propertyName,
-      options: validationOptions,
+      options: {
+        message: i18nValidationMessage('validation.isStringOrStringArray'),
+        ...validationOptions,
+      },
       validator: {
         validate(value: unknown) {
           return (
@@ -315,9 +307,6 @@ export function IsStringOrStringArray(validationOptions?: ValidationOptions) {
               value.length > 0 &&
               value.every((item) => typeof item === 'string'))
           );
-        },
-        defaultMessage(args: ValidationArguments) {
-          return `${args.property} must be in valid format`;
         },
       },
     });
@@ -363,7 +352,10 @@ export function IsValidWhere(validationOptions?: ValidationOptions) {
       name: 'isValidWhere',
       target: object.constructor,
       propertyName,
-      options: validationOptions,
+      options: {
+        message: i18nValidationMessage('validation.isValidWhere'),
+        ...validationOptions,
+      },
       validator: {
         validate(value: unknown) {
           if (!value || typeof value !== 'object' || Array.isArray(value))
@@ -371,9 +363,6 @@ export function IsValidWhere(validationOptions?: ValidationOptions) {
           return Object.entries(value).every(
             ([key, val]) => typeof key === 'string' && validateValue(val),
           );
-        },
-        defaultMessage(args: ValidationArguments) {
-          return `${args.property} must be an object with string keys and values of type string | number | array | object (recursively)`;
         },
       },
     });

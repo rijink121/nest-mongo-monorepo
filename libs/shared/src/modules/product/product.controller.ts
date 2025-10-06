@@ -39,6 +39,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -66,6 +67,7 @@ export class ProductController {
     @Owner() owner: OwnerDto,
     @Body() createProductDto: CreateProductDto,
     @Query() query: ApiQueryCreate,
+    @I18n() i18n: I18nContext,
   ) {
     const { error, data } = await this.productService.create({
       owner,
@@ -80,7 +82,10 @@ export class ProductController {
       );
     }
 
-    return { data: { [entity]: data }, message: 'Created' };
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.created', { args: { entity } }),
+    };
   }
 
   /**
@@ -94,6 +99,7 @@ export class ProductController {
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
     @Query() query: ApiQueryUpdate,
+    @I18n() i18n: I18nContext,
   ) {
     const { error, data } = await this.productService.update({
       owner,
@@ -105,14 +111,19 @@ export class ProductController {
 
     if (error) {
       if (error instanceof NotFoundError) {
-        throw new NotFoundException('Record not found');
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
       }
       throw new InternalServerErrorException(
         error instanceof Error ? error.message : error,
       );
     }
 
-    return { data: { [entity]: data }, message: 'Updated' };
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.updated', { args: { entity } }),
+    };
   }
 
   /**
@@ -121,7 +132,11 @@ export class ProductController {
   @Get()
   @ApiOperation({ summary: `Get all ${pluralizeString(entity)}` })
   @ResponseGetAll(Product)
-  async findAll(@Owner() owner: OwnerDto, @Query() query: ApiQueryGetAll) {
+  async findAll(
+    @Owner() owner: OwnerDto,
+    @Query() query: ApiQueryGetAll,
+    @I18n() i18n: I18nContext,
+  ) {
     const { error, data, offset, limit, count } =
       await this.productService.findAll({
         owner,
@@ -134,9 +149,13 @@ export class ProductController {
         error instanceof Error ? error.message : error,
       );
     }
+
+    const pluralizedEntity = pluralizeString(entity);
     return {
-      data: { [pluralizeString(entity)]: data, offset, limit, count },
-      message: 'Ok',
+      data: { [pluralizedEntity]: data, offset, limit, count },
+      message: i18n.t('crud.list', {
+        args: { entity: pluralizedEntity },
+      }),
     };
   }
 
@@ -146,7 +165,11 @@ export class ProductController {
   @Get('count')
   @ApiOperation({ summary: `Get count of ${pluralizeString(entity)}` })
   @ResponseCountAll()
-  async countAll(@Owner() owner: OwnerDto, @Query() query: ApiQueryCountAll) {
+  async countAll(
+    @Owner() owner: OwnerDto,
+    @Query() query: ApiQueryCountAll,
+    @I18n() i18n: I18nContext,
+  ) {
     const { error, count } = await this.productService.getCount({
       owner,
       action: 'getCount',
@@ -160,7 +183,7 @@ export class ProductController {
     }
     return {
       data: { count },
-      message: 'Ok',
+      message: i18n.t('crud.count', { args: { entity } }),
     };
   }
 
@@ -170,7 +193,11 @@ export class ProductController {
   @Get('find')
   @ApiOperation({ summary: `Find one ${entity}` })
   @ResponseGetOne(Product)
-  async findOne(@Owner() owner: OwnerDto, @Query() query: ApiQueryGetOne) {
+  async findOne(
+    @Owner() owner: OwnerDto,
+    @Query() query: ApiQueryGetOne,
+    @I18n() i18n: I18nContext,
+  ) {
     const { error, data } = await this.productService.findOne({
       owner,
       action: 'findOne',
@@ -179,13 +206,18 @@ export class ProductController {
 
     if (error) {
       if (error instanceof NotFoundError) {
-        throw new NotFoundException('Record not found');
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
       }
       throw new InternalServerErrorException(
         error instanceof Error ? error.message : error,
       );
     }
-    return { data: { [entity]: data }, message: 'Ok' };
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.retrieve', { args: { entity } }),
+    };
   }
 
   /**
@@ -198,6 +230,7 @@ export class ProductController {
     @Owner() owner: OwnerDto,
     @Param('id') id: string,
     @Query() query: ApiQueryGetById,
+    @I18n() i18n: I18nContext,
   ) {
     const { error, data } = await this.productService.findById({
       owner,
@@ -208,13 +241,18 @@ export class ProductController {
 
     if (error) {
       if (error instanceof NotFoundError) {
-        throw new NotFoundException('Record not found');
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
       }
       throw new InternalServerErrorException(
         error instanceof Error ? error.message : error,
       );
     }
-    return { data: { [entity]: data }, message: 'Ok' };
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.retrieve', { args: { entity } }),
+    };
   }
 
   /**
@@ -227,6 +265,7 @@ export class ProductController {
     @Owner() owner: OwnerDto,
     @Param('id') id: string,
     @Query() query: ApiQueryDelete,
+    @I18n() i18n: I18nContext,
   ) {
     const { error, data } = await this.productService.delete({
       owner,
@@ -237,12 +276,17 @@ export class ProductController {
 
     if (error) {
       if (error instanceof NotFoundError) {
-        throw new NotFoundException('Record not found');
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
       }
       throw new InternalServerErrorException(
         error instanceof Error ? error.message : error,
       );
     }
-    return { data: { [entity]: data }, message: 'Deleted' };
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.deleted', { args: { entity } }),
+    };
   }
 }

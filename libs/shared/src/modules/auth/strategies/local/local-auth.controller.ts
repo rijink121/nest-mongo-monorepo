@@ -23,6 +23,7 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { User } from '@shared/modules/user/entities/user.entity';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { AuthService } from '../../auth.service';
 import { LocalAuthDto } from './local-auth.dto';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -54,7 +55,7 @@ export class LocalAuthController {
             refresh_token: { type: 'string' },
           },
         },
-        message: { type: 'string', example: 'Created' },
+        message: { type: 'string', example: 'Login successful.' },
       },
     },
   })
@@ -63,6 +64,7 @@ export class LocalAuthController {
     @Owner() owner: OwnerDto,
     @Body() body: LocalAuthDto,
     @Ip() ip: string,
+    @I18n() i18n: I18nContext,
   ) {
     const { error, data } = await this.authService.createSession(owner, {
       ...body.info,
@@ -73,6 +75,6 @@ export class LocalAuthController {
         error instanceof Error ? error.message : error,
       );
     }
-    return { data, message: 'Login success' };
+    return { data, message: i18n.t('auth.success') };
   }
 }

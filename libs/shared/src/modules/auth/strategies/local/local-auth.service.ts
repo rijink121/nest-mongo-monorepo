@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@shared/modules/user/entities/user.entity';
 import { UserService } from '@shared/modules/user/user.service';
 import { compareSync } from 'bcrypt';
+import { I18nService } from 'nestjs-i18n';
 import { LocalAuthDto } from './local-auth.dto';
 
 /**
@@ -25,7 +26,10 @@ export interface AuthResponse {
  */
 @Injectable()
 export class LocalAuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly i18n: I18nService,
+  ) {}
 
   /**
    * Validates user credentials for local authentication strategy.
@@ -76,17 +80,17 @@ export class LocalAuthService {
 
       // User not found in database
       if (!data) {
-        return { error: 'Invalid credentials' };
+        return { error: this.i18n.t('auth.invalid') };
       }
 
       // Verify password hash matches
       if (!compareSync(password, data.password)) {
-        return { error: 'Invalid credentials' };
+        return { error: this.i18n.t('auth.invalid') };
       }
 
       // Check if user account is active
       if (!data.active) {
-        return { error: 'Account is inactive' };
+        return { error: this.i18n.t('auth.inactive') };
       }
 
       // Update last login timestamp

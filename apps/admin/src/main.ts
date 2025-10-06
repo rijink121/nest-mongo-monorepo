@@ -2,8 +2,10 @@ import { appFilter } from '@core/utils/swagger';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
 import { json, urlencoded } from 'express';
 import morgan from 'morgan';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { APP_NAME } from './app.config';
 import { AppModule } from './app.module';
 
@@ -40,6 +42,17 @@ async function bootstrap() {
   // Body parsers for incoming requests
   app.use(json({ limit: '5mb' }));
   app.use(urlencoded({ extended: true, limit: '5mb' }));
+
+  /* Validation */
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  app.useGlobalFilters(new I18nValidationExceptionFilter());
+  app.useGlobalPipes(
+    new I18nValidationPipe({
+      whitelist: true,
+      transform: true,
+      validationError: { target: false },
+    }),
+  );
 
   // Start the application
   await app.listen(process.env.PORT ?? 3000);

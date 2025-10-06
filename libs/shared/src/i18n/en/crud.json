@@ -1,0 +1,9 @@
+{
+  "created": "{entity} created successfully.",
+  "updated": "{entity} updated successfully.",
+  "deleted": "{entity} deleted successfully.",
+  "notFound": "{entity} not found!",
+  "list": "List of {entity}",
+  "count": "Total {entity} count",
+  "retrieve": "Retrieve {entity} details"
+}
