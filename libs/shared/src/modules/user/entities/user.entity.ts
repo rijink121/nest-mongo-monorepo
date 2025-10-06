@@ -61,7 +61,7 @@ export class User extends MongoSchema {
   @IsString()
   last_name: string;
 
-  @Prop()
+  @Prop({ index: true })
   @ApiProperty({
     description: 'Full Name',
     example: 'Ross Geller',
@@ -69,7 +69,7 @@ export class User extends MongoSchema {
   })
   name?: string;
 
-  @Prop()
+  @Prop({ index: true })
   @ApiProperty({
     description: 'Email',
     example: 'ross.geller@gmail.com',

@@ -17,7 +17,7 @@ export class LocalAuthDto {
   username: string;
 
   @ApiProperty({
-    description: 'Passsword',
+    description: 'Password',
     example: '123456',
   })
   @IsString()

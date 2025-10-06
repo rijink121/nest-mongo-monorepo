@@ -3,10 +3,11 @@ import { registerAs } from '@nestjs/config';
 import { JwtModuleOptions } from '@nestjs/jwt';
 
 /**
- * Redis configuration provider for Nest's ConfigModule.
+ * JWT configuration provider for Nest's ConfigModule.
  *
- * Resolves the Redis connection URI from the environment or AWS Secrets Manager
- * via the shared `env` utility. Defaults to a local URI for development.
+ * Resolves the JWT secret key from the environment or AWS Secrets Manager
+ * via the shared `env` utility. Configures default token expiration time
+ * (24 hours) and provides a fallback secret for development.
  */
 export default registerAs<JwtModuleOptions>(
   'jwt',
