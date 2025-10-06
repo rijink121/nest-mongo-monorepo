@@ -21,6 +21,13 @@ async function bootstrap() {
       .setDescription('Admin App API description')
       .setVersion('v1')
       .addBearerAuth()
+      .addGlobalParameters({
+        name: 'x-lang',
+        in: 'header',
+        required: false,
+        schema: { type: 'string', example: 'en' },
+        description: 'Language code (e.g., en, fr, es)',
+      })
       .build();
 
     const document = SwaggerModule.createDocument(app, SwaggerConfig);
