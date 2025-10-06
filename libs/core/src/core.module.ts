@@ -5,6 +5,7 @@ import { join } from 'path';
 import { CoreService } from './core.service';
 import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CachingModule } from './modules/caching/caching.module';
+import { LanguageModule } from './modules/language/language.module';
 
 @Module({})
 export class CoreModule {
@@ -24,6 +25,7 @@ export class CoreModule {
           },
         }),
         CachingModule,
+        LanguageModule,
       ],
       providers: [CoreService],
       exports: [CoreService],

@@ -45,6 +45,7 @@
     "moment-timezone": "^0.6.0",
     "mongoose": "^8.18.1",
     "nestjs-cls": "^6.0.1",
+    "nestjs-i18n": "^10.5.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pluralize-esm": "^9.0.5",
