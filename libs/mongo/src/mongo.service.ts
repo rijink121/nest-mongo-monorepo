@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectConnection } from '@nestjs/mongoose';
 import { History } from '@shared/modules/history/entities/history.entity';
 import { Trash } from '@shared/modules/trash/entities/trash.entity';
-import { Connection, HydratedDocument, Model, Types } from 'mongoose';
+import { Connection, Document, HydratedDocument, Model, Types } from 'mongoose';
 import {
   DefaultSchemaMethods,
   DefaultSchemaStaticMethods,

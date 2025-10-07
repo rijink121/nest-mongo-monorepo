@@ -98,7 +98,7 @@ export class LocalAuthService {
       await data.save();
 
       // Return successful authentication with user data
-      return { error: false, user: data };
+      return { user: data };
     } catch (error: unknown) {
       // Handle unexpected errors during authentication
       return { error };
