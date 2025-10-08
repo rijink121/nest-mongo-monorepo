@@ -1,7 +1,7 @@
 import { CacheManagerOptions } from '@nestjs/cache-manager';
 import { ThrottlerOptions } from '@nestjs/throttler';
 import { CDNStorage, Environment } from '@shared/constants/app.contants';
-import { join } from 'path/win32';
+import { join } from 'path';
 
 export default () => ({
   /**
