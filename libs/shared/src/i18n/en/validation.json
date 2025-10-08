@@ -1,0 +1,11 @@
+{
+  "isEqual": "{property} should be equal to {constraints.0}",
+  "isNotEqual": "{property} should not be equal to {constraints.0}",
+  "isGreaterThan": "{property} should be greater than {constraints.0}",
+  "isGreaterThanEqual": "{property} should be greater than or equal to {constraints.0}",
+  "isLessThan": "{property} should be less than {constraints.0}",
+  "isLessThanEqual": "{property} should be less than or equal to {constraints.0}",
+  "isValidScope": "{property} must be in valid format",
+  "isStringOrStringArray": "{property} must be in valid format",
+  "isValidWhere": "{property} must be an object with string keys and values of type string | number | array | object (recursively)"
+}

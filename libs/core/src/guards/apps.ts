@@ -1,4 +1,4 @@
-import { APPS_KEY } from '@core/decorators/apps';
+import { APPS_KEY } from '@core/decorators/apps.decorator';
 import {
   CanActivate,
   ExecutionContext,

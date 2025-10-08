@@ -1,12 +1,26 @@
 import { CoreModule } from '@core';
+import { MongoModule } from '@lib/mongo';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from '@shared';
-import { APP_NAME } from './app.config';
+import sharedConfig from '@shared/config';
+import { join } from 'path';
+import { appId } from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import config from './config';
 
 @Module({
-  imports: [CoreModule.register(APP_NAME), SharedModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [join(process.cwd(), 'apps', appId, '.env'), '.env'],
+      load: [sharedConfig, config],
+    }),
+    CoreModule.register(appId),
+    MongoModule.root({ seeder: true }),
+    SharedModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
