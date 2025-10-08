@@ -1,8 +1,8 @@
 import { Type } from '@nestjs/common';
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { defaultEngine } from '@shared/config/app.config';
 import { AppEngine } from '@shared/constants/app.contants';
+import { defaultEngine } from '@shared/shared.config';
 import { Type as TransformType } from 'class-transformer';
 import { IsBoolean, IsOptional } from 'class-validator';
 import {

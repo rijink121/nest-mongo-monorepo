@@ -45,15 +45,6 @@ export const defaultEngine: AppEngine =
 export const sqlDialect: SqlDialect = SqlDialect.MySQL;
 
 /**
- * Human-readable name of the application.
- * Used for display purposes, logging, and API documentation.
- *
- * @type {string}
- * @readonly
- */
-export const appName = 'NewAgeSmb Core Framework';
-
-/**
  * Current version of the application.
  * Used for API versioning, compatibility checks, and feature gating.
  *
@@ -67,7 +58,7 @@ export const appName = 'NewAgeSmb Core Framework';
  * }
  * ```
  */
-export const appVersion = 1;
+export const latestVersion: number = 1;
 
 /**
  * Minimum supported version of the application.
@@ -84,4 +75,4 @@ export const appVersion = 1;
  * }
  * ```
  */
-export const appMinVersion = 1;
+export const minVersion: number = 1;
