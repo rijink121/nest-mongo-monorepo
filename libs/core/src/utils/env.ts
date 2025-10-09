@@ -118,7 +118,7 @@ class EnvironmentManager {
     }
 
     // Priority: secrets > process.env > defaultValue
-    const value = this.secrets[name] ?? process.env[name] ?? defaultValue;
+    const value = this.secrets[name] ?? (process.env[name] || defaultValue);
 
     return value as T;
   }
