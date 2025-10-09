@@ -81,26 +81,20 @@ class JwtEnv {
  * JWT_SECRET=MySecureKey123!
  * ```
  */
-export default registerAs<JwtModuleOptions>(
-  'jwt',
-  async (): Promise<JwtModuleOptions> => {
-    // Initialize environment configuration and AWS Secrets Manager if configured
-    await env.initialize();
+export default registerAs<JwtModuleOptions>('jwt', (): JwtModuleOptions => {
+  // Validate JWT environment variables against the schema
+  const validatedEnv = validateEnvConfig(JwtEnv, {
+    JWT_SECRET: env.get('JWT_SECRET', 'Secret123!', true),
+  });
 
-    // Validate JWT environment variables against the schema
-    const validatedEnv = validateEnvConfig(JwtEnv, {
-      JWT_SECRET: env.get('JWT_SECRET', 'Secret123!', true),
-    });
+  // Return validated JWT configuration
+  return {
+    // Use the validated JWT secret key
+    secret: validatedEnv.JWT_SECRET,
 
-    // Return validated JWT configuration
-    return {
-      // Use the validated JWT secret key
-      secret: validatedEnv.JWT_SECRET,
-
-      // Configure token expiration (24 hours in seconds)
-      signOptions: {
-        expiresIn: 24 * 60 * 60, // 86400 seconds = 24 hours
-      },
-    };
-  },
-);
+    // Configure token expiration (24 hours in seconds)
+    signOptions: {
+      expiresIn: 24 * 60 * 60, // 86400 seconds = 24 hours
+    },
+  };
+});

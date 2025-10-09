@@ -98,10 +98,7 @@ class MongoEnv {
  */
 export default registerAs<MongooseModuleOptions>(
   'mongo',
-  async (): Promise<MongooseModuleOptions> => {
-    // Initialize environment configuration and AWS Secrets Manager if configured
-    await env.initialize();
-
+  (): MongooseModuleOptions => {
     // Validate MongoDB environment variables against the schema
     const validatedEnv = validateEnvConfig(MongoEnv, {
       MONGO_URI: env.get('MONGO_URI', 'mongodb://localhost/nest'),

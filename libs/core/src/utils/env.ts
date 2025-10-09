@@ -2,6 +2,12 @@ import {
   GetSecretValueCommand,
   SecretsManagerClient,
 } from '@aws-sdk/client-secrets-manager';
+import dotenv from 'dotenv';
+
+interface EnvironmentManagerOptions {
+  useAwsSecretsManager?: boolean;
+  dotEnvPath?: string;
+}
 
 /**
  * Singleton class for managing environment variables and AWS Secrets Manager integration.
@@ -13,6 +19,10 @@ class EnvironmentManager {
   private secrets: Record<string, string> = {};
   private isInitialized = false;
   private initPromise: Promise<void> | null = null;
+  private options: EnvironmentManagerOptions = {
+    useAwsSecretsManager: true,
+    dotEnvPath: undefined,
+  };
 
   /**
    * Private constructor to enforce singleton pattern
@@ -32,17 +42,30 @@ class EnvironmentManager {
   }
 
   /**
-   * Initializes the environment manager by loading secrets from AWS Secrets Manager.
+   * Initializes the environment manager by loading .env files and optionally AWS Secrets Manager.
    * This method is idempotent and can be safely called multiple times.
+   * @param options Optional configuration for initialization behavior
    * @returns Promise that resolves when initialization is complete
    */
-  async initialize(): Promise<void> {
+  async initialize(options?: EnvironmentManagerOptions): Promise<void> {
     if (this.isInitialized) return;
 
     if (this.initPromise !== null) return this.initPromise;
 
+    this.options = { ...this.options, ...options };
+
+    if (this.options.dotEnvPath) {
+      dotenv.config({ path: this.options.dotEnvPath });
+    } else {
+      dotenv.config();
+    }
+
     this.initPromise = this.loadSecrets();
-    await this.initPromise;
+
+    if (this.options.useAwsSecretsManager) {
+      await this.initPromise;
+    }
+
     this.isInitialized = true;
   }
 
@@ -116,7 +139,7 @@ class EnvironmentManager {
    * @param ignoreDefaultInProduction If true, ignores the default value when NODE_ENV is 'production'.
    *                                  This ensures production environments must provide explicit values
    *                                  for critical configuration, preventing fallback to development defaults.
-   * @returns The environment variable value cast to type T
+   * @returns The environment variable value cast to type T, or undefined if not found and no default
    * @throws Error if the EnvironmentManager is not initialized
    *
    * @example Basic usage
@@ -126,7 +149,7 @@ class EnvironmentManager {
    *
    * @example With production safety
    * ```typescript
-   * // This will throw in production if DATABASE_URL is not set
+   * // This will return undefined in production if DATABASE_URL is not set
    * const dbUrl = env.get('DATABASE_URL', 'mongodb://localhost/dev', true);
    * ```
    *
@@ -147,12 +170,14 @@ class EnvironmentManager {
       );
     }
 
-    defaultValue =
-      ignoreDefaultInProduction && process.env.NODE_ENV === 'production'
-        ? undefined
-        : defaultValue;
-    // Priority: secrets > process.env > defaultValue
-    const value = this.secrets[name] ?? (process.env[name] || defaultValue);
+    // Apply production safety: ignore default value in production if requested
+    if (ignoreDefaultInProduction && process.env.NODE_ENV === 'production') {
+      defaultValue = undefined;
+    }
+
+    // Resolution priority: AWS Secrets Manager > process.env > defaultValue
+    const value =
+      this.secrets[name] ?? (process.env[name] || null) ?? defaultValue;
 
     return value as T;
   }

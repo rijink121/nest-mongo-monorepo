@@ -120,22 +120,16 @@ export class RedisEnv {
  * REDIS_DB=0
  * ```
  */
-export default registerAs<{ uri: string }>(
-  'redis',
-  async (): Promise<{ uri: string }> => {
-    // Initialize environment configuration and AWS Secrets Manager if configured
-    await env.initialize();
+export default registerAs<{ uri: string }>('redis', (): { uri: string } => {
+  // Validate Redis environment variables against the schema
+  const validatedEnv = validateEnvConfig(RedisEnv, {
+    REDIS_HOST: env.get('REDIS_HOST', 'localhost'),
+    REDIS_PORT: env.get('REDIS_PORT', 6379),
+    REDIS_DB: env.get('REDIS_DB', 0),
+  });
 
-    // Validate Redis environment variables against the schema
-    const validatedEnv = validateEnvConfig(RedisEnv, {
-      REDIS_HOST: env.get('REDIS_HOST', 'localhost'),
-      REDIS_PORT: env.get('REDIS_PORT', 6379),
-      REDIS_DB: env.get('REDIS_DB', 0),
-    });
-
-    // Return validated Redis configuration with properly formatted URI
-    return {
-      uri: `redis://${validatedEnv.REDIS_HOST}:${validatedEnv.REDIS_PORT}/${validatedEnv.REDIS_DB}`,
-    };
-  },
-);
+  // Return validated Redis configuration with properly formatted URI
+  return {
+    uri: `redis://${validatedEnv.REDIS_HOST}:${validatedEnv.REDIS_PORT}/${validatedEnv.REDIS_DB}`,
+  };
+});

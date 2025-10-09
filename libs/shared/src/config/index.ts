@@ -101,10 +101,7 @@ class SharedEnv extends AppEnv {
   CDN_URL: string;
 }
 
-export default async () => {
-  // Initialize environment configuration and AWS Secrets Manager if configured
-  await env.initialize();
-
+export default () => {
   // Validate shared environment variables against the schema
   const validatedEnv = validateEnvConfig(SharedEnv, {
     NODE_ENV: env.get('NODE_ENV', Environment.Development),

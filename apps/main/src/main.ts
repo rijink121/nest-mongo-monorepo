@@ -1,4 +1,5 @@
 import { isPrimaryInstance } from '@core/utils';
+import { env } from '@core/utils/env';
 import { appFilter, getSwaggerConfig } from '@core/utils/swagger';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -17,6 +18,8 @@ import { appId, appName, appVersion } from './app.config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  // Initialize environment configuration and AWS Secrets Manager if configured
+  await env.initialize();
   // Create Nest application
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
@@ -25,8 +28,8 @@ async function bootstrap() {
 
   /* Loading config */
   const config = app.get(ConfigService);
-  const env = config.get<Environment>('env');
-  if (env !== Environment.Production) {
+  const appEnv = config.get<Environment>('env');
+  if (appEnv !== Environment.Production) {
     /* Morgan logger in non-production env */
     app.use(morgan('tiny'));
     // Swagger documentation setup in non-production environment
