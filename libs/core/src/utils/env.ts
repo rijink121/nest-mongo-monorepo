@@ -104,19 +104,53 @@ class EnvironmentManager {
 
   /**
    * Gets an environment variable value, checking secrets first, then process.env, then defaultValue.
+   *
+   * The resolution priority is:
+   * 1. AWS Secrets Manager (if configured and initialized)
+   * 2. Process environment variables (process.env)
+   * 3. Default value (if provided and not ignored in production)
+   *
    * @template T The expected type of the value
    * @param name The name of the environment variable
    * @param defaultValue Optional default value to return if the variable is not found
+   * @param ignoreDefaultInProduction If true, ignores the default value when NODE_ENV is 'production'.
+   *                                  This ensures production environments must provide explicit values
+   *                                  for critical configuration, preventing fallback to development defaults.
    * @returns The environment variable value cast to type T
    * @throws Error if the EnvironmentManager is not initialized
+   *
+   * @example Basic usage
+   * ```typescript
+   * const port = env.get('PORT', '3000');
+   * ```
+   *
+   * @example With production safety
+   * ```typescript
+   * // This will throw in production if DATABASE_URL is not set
+   * const dbUrl = env.get('DATABASE_URL', 'mongodb://localhost/dev', true);
+   * ```
+   *
+   * @example Typed values
+   * ```typescript
+   * const port = env.get<number>('PORT', 3000);
+   * const isDebug = env.get<boolean>('DEBUG', false);
+   * ```
    */
-  get<T = string>(name: string, defaultValue?: T): T {
+  get<T = string>(
+    name: string,
+    defaultValue?: T,
+    ignoreDefaultInProduction?: boolean,
+  ): T {
     if (!this.isInitialized) {
       throw new Error(
         'EnvironmentManager not initialized. Call initialize() first.',
       );
     }
 
+    defaultValue =
+      ignoreDefaultInProduction && process.env.NODE_ENV === 'production'
+        ? undefined
+        : defaultValue;
     // Priority: secrets > process.env > defaultValue
     const value = this.secrets[name] ?? (process.env[name] || defaultValue);
 
