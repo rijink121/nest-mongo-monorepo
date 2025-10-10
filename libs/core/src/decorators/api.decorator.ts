@@ -2,7 +2,7 @@ import {
   ResponseBadRequest,
   ResponseForbidden,
   ResponseInternalServerError,
-} from '@core/dto/api-response.dto';
+} from '@core/definitions/api-response.dto';
 import { snakeCase } from '@core/utils';
 import { applyDecorators, Type } from '@nestjs/common';
 import {

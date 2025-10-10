@@ -3,7 +3,7 @@ import { Public } from '@core/decorators/public.decorator';
 import {
   ResponseInternalServerError,
   ResponseUnauthorized,
-} from '@core/dto/api-response.dto';
+} from '@core/definitions/api-response.dto';
 import type { OwnerDto } from '@core/types/owner';
 import {
   Body,

@@ -17,7 +17,7 @@ import {
   ApiQueryGetById,
   ApiQueryGetOne,
   ApiQueryUpdate,
-} from '@core/dto/api-query.dto';
+} from '@core/definitions/api-query.dto';
 import type { OwnerDto } from '@core/types/owner';
 import { pluralizeString, snakeCase } from '@core/utils';
 import { NotFoundError } from '@core/utils/error';
