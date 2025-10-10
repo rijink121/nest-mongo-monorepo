@@ -1,3 +1,4 @@
+import { TrimPipe } from '@core/pipes/trim.pipe';
 import { isPrimaryInstance } from '@core/utils';
 import { env } from '@core/utils/env';
 import { appFilter, getSwaggerConfig } from '@core/utils/swagger';
@@ -48,6 +49,7 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalFilters(new I18nValidationExceptionFilter());
   app.useGlobalPipes(
+    new TrimPipe(),
     new I18nValidationPipe({
       whitelist: true,
       transform: true,
