@@ -1,6 +1,7 @@
 import moment from 'moment-timezone';
 import pluralize from 'pluralize-esm';
 import { v1 as uuidv1 } from 'uuid';
+
 /**
  * Adds the specified number of days to the current date.
  *
@@ -14,6 +15,7 @@ import { v1 as uuidv1 } from 'uuid';
 export const addDays = (days: number): Date => {
   return moment().add(days, 'days').toDate();
 };
+
 /**
  * Safely parses a JSON string and returns the parsed object or undefined if parsing fails.
  *
@@ -32,6 +34,7 @@ export const parseJSON = <T = unknown>(str: string): T | undefined => {
     return undefined;
   }
 };
+
 /**
  * Transforms JSON string values to parsed objects or returns the original value if not a string.
  * Used for query parameters that may be passed as JSON strings in HTTP requests.
@@ -47,6 +50,7 @@ export const parseJSON = <T = unknown>(str: string): T | undefined => {
 export const transformJSON = ({ value }: { value: unknown }): unknown => {
   return typeof value === 'string' ? parseJSON<unknown>(value) : value;
 };
+
 /**
  * Returns the plural form of a given string.
  *
@@ -61,21 +65,50 @@ export const pluralizeString = (str: string): string => pluralize(str);
 /**
  * Converts a string to snake_case.
  *
+ * Splits the string at uppercase letters and joins with underscores,
+ * then converts the entire string to lowercase.
+ *
  * @param str - The string to convert
  * @returns The snake_cased string
  *
  * @example
  * snakeCase('UserName'); // 'user_name'
+ * snakeCase('firstName'); // 'first_name'
+ * snakeCase('HTTPRequest'); // 'h_t_t_p_request'
  */
-
 export const snakeCase = (str: string): string =>
   str
-    .split(/(?=[A-Z])/)
-    .join('_')
-    .toLowerCase();
+    .split(/(?=[A-Z])/) // Split before each uppercase letter
+    .join('_') // Join with underscores
+    .toLowerCase(); // Convert to lowercase
 
+/**
+ * Checks if the current process is the primary instance in a PM2 cluster.
+ *
+ * This is useful when running multiple instances of the application with PM2.
+ * Only the primary instance (instance 0) will return true.
+ *
+ * @returns True if this is the primary instance or not running in cluster mode
+ *
+ * @example
+ * if (isPrimaryInstance()) {
+ *   // Run scheduled tasks only on primary instance
+ *   scheduleCronJobs();
+ * }
+ */
 export const isPrimaryInstance = (): boolean =>
   typeof process.env.NODE_APP_INSTANCE === 'undefined' ||
   process.env.NODE_APP_INSTANCE === '0';
 
+/**
+ * Generates a version 1 UUID (timestamp-based).
+ *
+ * Uses the UUID v1 algorithm which creates a unique identifier based on
+ * timestamp and machine MAC address.
+ *
+ * @returns A string representing a UUID v1
+ *
+ * @example
+ * const id = uuid(); // '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
+ */
 export const uuid = (): string => uuidv1();
