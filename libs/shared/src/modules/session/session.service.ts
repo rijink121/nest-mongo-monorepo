@@ -53,16 +53,16 @@ export class SessionService extends ModelService<Session> {
    * }
    * ```
    */
-  createToken<T extends object>(
+  async createToken<T extends object>(
     payload: T,
-  ): JobResponse<{ token: string; tokenExpiry: moment.Moment }> {
+  ): Promise<JobResponse<{ token: string; tokenExpiry: moment.Moment }>> {
     try {
       // Retrieve JWT configuration from application settings
       const { secret, signOptions } =
         this.configService.getOrThrow<JwtModuleOptions>('jwt');
 
       // Sign the payload to create a JWT token
-      const token = this.jwtService.sign(payload, {
+      const token = await this.jwtService.signAsync(payload, {
         secret,
       });
 
@@ -99,13 +99,13 @@ export class SessionService extends ModelService<Session> {
    * const user = data.payload;
    * ```
    */
-  verifyToken<T extends object>(token: string): JobResponse {
+  async verifyToken<T extends object>(token: string): Promise<JobResponse> {
     try {
       // Retrieve JWT secret from configuration
       const { secret } = this.configService.getOrThrow<JwtModuleOptions>('jwt');
 
       // Verify token signature and expiration
-      const data: T = this.jwtService.verify(token, {
+      const data: T = await this.jwtService.verifyAsync(token, {
         secret,
       });
 

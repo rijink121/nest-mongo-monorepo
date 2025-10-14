@@ -28,7 +28,7 @@ export class AuthService {
       });
       if (error || !data) return { error };
       const { data: tokenData, error: tokenError } =
-        this.sessionService.createToken<JwtPayload>({
+        await this.sessionService.createToken<JwtPayload>({
           sessionId: data._id.toString(),
           userId: owner.id,
         });

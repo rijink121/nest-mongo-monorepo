@@ -94,7 +94,7 @@ export default registerAs<JwtModuleOptions>('jwt', (): JwtModuleOptions => {
 
     // Configure token expiration (24 hours in seconds)
     signOptions: {
-      expiresIn: 24 * 60 * 60, // 86400 seconds = 24 hours
+      expiresIn: '24h',
     },
   };
 });
