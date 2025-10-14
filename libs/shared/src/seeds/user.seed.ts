@@ -4,8 +4,7 @@ import { Role } from '@shared/modules/user/role.enum';
 
 const seed: Seed<User> = {
   model: 'User',
-  action: 'always',
-  alwaysRule: 'truncate',
+  action: 'once',
   data: [
     {
       role: Role.Admin,
