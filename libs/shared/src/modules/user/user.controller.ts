@@ -8,6 +8,7 @@ import {
   ResponseUpdated,
 } from '@core/decorators/api.decorator';
 import { Cache } from '@core/decorators/cache.decorator';
+import { OwnerIncludeAttribute } from '@core/decorators/owner-attributes.decorator';
 import { Owner } from '@core/decorators/owner.decorator';
 import {
   ApiQueryCountAll,
@@ -36,10 +37,12 @@ import {
 import {
   ApiBearerAuth,
   ApiExtraModels,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { I18n, I18nContext } from 'nestjs-i18n';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -123,6 +126,87 @@ export class UserController {
     return {
       data: { [entity]: data },
       message: i18n.t('crud.updated', { args: { entity } }),
+    };
+  }
+
+  /**
+   * Update logged in user details
+   */
+  @Put('me')
+  @ApiOperation({ summary: 'Update logged in user details' })
+  @ResponseUpdated(User)
+  async updateMe(
+    @Owner() owner: OwnerDto,
+    @Body() updateUserDto: UpdateUserDto,
+    @Query() query: ApiQueryUpdate,
+    @I18n() i18n: I18nContext,
+  ) {
+    const { error, data } = await this.userService.update({
+      owner,
+      action: 'update',
+      id: owner.id,
+      body: { ...updateUserDto },
+      payload: { ...query },
+    });
+
+    if (error) {
+      if (error instanceof NotFoundError) {
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
+      }
+      throw new InternalServerErrorException(
+        error instanceof Error ? error.message : error,
+      );
+    }
+
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.updated', { args: { entity } }),
+    };
+  }
+
+  /**
+   * Change password for logged in user
+   */
+  @Put('password')
+  @ApiOperation({ summary: 'Change password for logged in user' })
+  @ApiOkResponse({
+    description: 'Success',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Password changed',
+        },
+      },
+    },
+  })
+  @OwnerIncludeAttribute('password')
+  async changePassword(
+    @Owner() owner: OwnerDto & { password: string },
+    @Body() changePasswordDto: ChangePasswordDto,
+    @I18n() i18n: I18nContext,
+  ) {
+    const { error } = await this.userService.changePassword({
+      owner,
+      action: 'changePassword',
+      payload: { ...changePasswordDto, user_password: owner.password },
+    });
+
+    if (error) {
+      if (error instanceof NotFoundError) {
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
+      }
+      throw new InternalServerErrorException(
+        error instanceof Error ? error.message : error,
+      );
+    }
+
+    return {
+      message: i18n.t('crud.passwordChanged', { args: { entity } }),
     };
   }
 
