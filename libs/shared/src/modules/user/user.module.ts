@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { hashSync } from 'bcrypt';
 import { User, UserDocument, UserSchema } from './entities/user.entity';
-import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
@@ -34,7 +33,6 @@ import { UserService } from './user.service';
       inject: [ConfigService],
     }),
   ],
-  controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
 })

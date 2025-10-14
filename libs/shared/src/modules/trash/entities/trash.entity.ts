@@ -9,7 +9,7 @@ import { HydratedDocument, Types } from 'mongoose';
 
 export type TrashDocument = HydratedDocument<Trash>;
 
-@Schema({ collection: 'trashes', ...defaultSchemaOptions })
+@Schema({ ...defaultSchemaOptions })
 export class Trash extends MongoSchema {
   @Prop()
   @ApiProperty({ description: 'Entity Name', example: 'User' })

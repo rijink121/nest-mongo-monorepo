@@ -20,7 +20,6 @@ import { Role } from '../role.enum';
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({
-  collection: 'User',
   ...defaultSchemaOptions,
 })
 export class User extends MongoSchema {

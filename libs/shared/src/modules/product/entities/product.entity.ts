@@ -11,7 +11,6 @@ import { HydratedDocument } from 'mongoose';
 export type ProductDocument = HydratedDocument<Product>;
 
 @Schema({
-  collection: 'product',
   ...defaultSchemaOptions,
 })
 export class Product extends MongoSchema {

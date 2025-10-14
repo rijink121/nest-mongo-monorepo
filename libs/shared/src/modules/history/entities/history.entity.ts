@@ -9,7 +9,7 @@ import { HydratedDocument, Types } from 'mongoose';
 
 export type HistoryDocument = HydratedDocument<History>;
 
-@Schema({ collection: 'histories', ...defaultSchemaOptions })
+@Schema({ ...defaultSchemaOptions })
 export class History extends MongoSchema {
   @Prop()
   @ApiProperty({ description: 'Entity Name', example: 'User' })

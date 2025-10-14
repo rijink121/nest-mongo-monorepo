@@ -10,7 +10,6 @@ import { HydratedDocument } from 'mongoose';
 export type SessionDocument = HydratedDocument<Session>;
 
 @Schema({
-  collection: 'session',
   ...defaultSchemaOptions,
 })
 export class Session extends MongoSchema {

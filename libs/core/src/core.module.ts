@@ -8,11 +8,11 @@ import { MsClientModule } from './modules/ms-client/ms-client.module';
 
 @Module({})
 export class CoreModule {
-  static register(appName: string): DynamicModule {
+  static register(appId: string): DynamicModule {
     return {
       module: CoreModule,
       imports: [
-        AppConfigModule.register(appName),
+        AppConfigModule.register(appId),
         ClsModule.forRoot({
           global: true,
           middleware: {

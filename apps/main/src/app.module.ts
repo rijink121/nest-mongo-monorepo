@@ -19,7 +19,7 @@ import config from './config';
     }),
     CoreModule.register(appId),
     MongoModule.root({ seeder: true }),
-    SharedModule,
+    SharedModule.register(appId),
   ],
   controllers: [AppController],
   providers: [AppService],

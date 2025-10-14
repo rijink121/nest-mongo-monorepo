@@ -17,7 +17,7 @@ import config from './config';
       load: [sharedConfig, config],
     }),
     CoreModule.register(appId),
-    SharedModule,
+    SharedModule.register(appId),
   ],
   controllers: [AppController],
   providers: [AppService],
