@@ -29,7 +29,7 @@ export class AuthService {
       const { data: tokenData, error: tokenError } =
         this.sessionService.createToken({
           sessionId: data._id.toString(),
-          userId: owner.userId,
+          userId: owner.id,
         });
       if (tokenError || !tokenData) {
         return { error: tokenError };
