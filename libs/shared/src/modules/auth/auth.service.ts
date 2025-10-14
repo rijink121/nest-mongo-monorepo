@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { SessionService } from '../session/session.service';
 import { SessionData } from './definitions/session';
+import { JwtPayload } from './strategies/jwt/jwt-auth.strategy';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +28,7 @@ export class AuthService {
       });
       if (error || !data) return { error };
       const { data: tokenData, error: tokenError } =
-        this.sessionService.createToken({
+        this.sessionService.createToken<JwtPayload>({
           sessionId: data._id.toString(),
           userId: owner.id,
         });
