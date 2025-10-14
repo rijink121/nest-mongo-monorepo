@@ -1,6 +1,6 @@
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
+import { BaseCacheInterceptor } from './base-cache.interceptor';
 
 /**
  * Role-based cache interceptor that generates cache keys including user role information.
@@ -37,7 +37,7 @@ import { Request } from 'express';
  * - Efficient for role-based access control scenarios
  */
 @Injectable()
-export class RoleCacheInterceptor extends CacheInterceptor {
+export class RoleCacheInterceptor extends BaseCacheInterceptor {
   /**
    * Generates a role-specific cache key by appending the user role to the base key.
    *
@@ -49,16 +49,17 @@ export class RoleCacheInterceptor extends CacheInterceptor {
     const request: Request = context.switchToHttp().getRequest();
 
     // Generate the base cache key using parent interceptor logic
-    const baseKey = super.trackBy(context);
+    let baseKey = super.trackBy(context);
 
     // Return undefined if base key generation failed
     if (!baseKey) return undefined;
 
     // Append user role for authenticated requests to enable role-based sharing
     if (request.user?.role) {
-      return `${baseKey}:role:${request.user.role}`;
+      baseKey = `${baseKey}:role:${request.user.role}`;
     }
 
+    void super.setKeyTag(context, baseKey);
     // Fall back to base key for unauthenticated requests
     return baseKey;
   }

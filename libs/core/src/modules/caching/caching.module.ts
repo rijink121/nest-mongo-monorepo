@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import redisConfig from '@shared/config/redis.config';
 import { Keyv } from 'keyv';
+import { CachingService } from './caching.service';
 
 /**
  * Module for configuring and providing global caching support.
@@ -46,5 +47,7 @@ import { Keyv } from 'keyv';
       },
     }),
   ],
+  providers: [CachingService],
+  exports: [CachingService],
 })
 export class CachingModule {}

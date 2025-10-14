@@ -1,4 +1,5 @@
-import { addDays } from '@core/utils';
+import { CachingService } from '@core/modules/caching/caching.service';
+import { addDays, snakeCase } from '@core/utils';
 import { NotFoundError } from '@core/utils/error';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -46,6 +47,7 @@ export class MongoService<M extends MongoSchema> {
     @Inject('MODEL_NAME') private modelName: string,
     @Inject('MODEL_OPTIONS') private options: MongoModelOption,
     @InjectConnection() private connection: Connection,
+    private cachingService: CachingService,
     private _config: ConfigService,
   ) {
     // Get the model instance from the connection
@@ -87,6 +89,16 @@ export class MongoService<M extends MongoSchema> {
   }
 
   /**
+   * Clear the cache for the model.
+   */
+  private async clearCache() {
+    const tags = this.options.cacheTags || [snakeCase(this.modelName)];
+    for (const tag of tags) {
+      await this.cachingService.clearTag(tag);
+    }
+  }
+
+  /**
    * Create a new record using model's create method
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
@@ -114,6 +126,10 @@ export class MongoService<M extends MongoSchema> {
           data: data.toJSON(),
           created_by: owner?.id,
         });
+      }
+
+      if (this.options.cache) {
+        await this.clearCache();
       }
 
       const { populate } = options;
@@ -158,6 +174,10 @@ export class MongoService<M extends MongoSchema> {
             created_by: owner?.id,
           });
         });
+      }
+
+      if (this.options.cache) {
+        await this.clearCache();
       }
 
       return { data };
@@ -216,6 +236,10 @@ export class MongoService<M extends MongoSchema> {
         });
       }
 
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       if (populate) {
         data = await data.populate(populate);
       }
@@ -265,6 +289,10 @@ export class MongoService<M extends MongoSchema> {
         });
       }
 
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       return { data, previousData };
     } catch (error) {
       return { error };
@@ -292,6 +320,11 @@ export class MongoService<M extends MongoSchema> {
       }
       const { where = {} } = options;
       const data = await this.model.updateMany(where, body);
+
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       return { data };
     } catch (error) {
       return { error };
@@ -444,6 +477,10 @@ export class MongoService<M extends MongoSchema> {
         });
       }
 
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       if (populate) {
         data = await data.populate(populate);
       }
@@ -508,6 +545,10 @@ export class MongoService<M extends MongoSchema> {
         });
       }
 
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       if (populate) {
         data = await data.populate(populate);
       }
@@ -553,6 +594,10 @@ export class MongoService<M extends MongoSchema> {
             data: data.toJSON(),
             created_by: owner?.id,
           });
+        }
+
+        if (this.options.cache) {
+          await this.clearCache();
         }
       }
 
@@ -619,6 +664,11 @@ export class MongoService<M extends MongoSchema> {
           });
         }
       }
+
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       return { data, created };
     } catch (error) {
       return { error };
@@ -667,6 +717,10 @@ export class MongoService<M extends MongoSchema> {
         });
       }
 
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       return { data };
     } catch (error) {
       return { error };
@@ -711,6 +765,10 @@ export class MongoService<M extends MongoSchema> {
         });
       }
 
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       return { data };
     } catch (error) {
       return { error };
@@ -734,6 +792,11 @@ export class MongoService<M extends MongoSchema> {
         force: hardDelete,
         deletedBy: owner?.id,
       });
+
+      if (this.options.cache) {
+        await this.clearCache();
+      }
+
       return { data };
     } catch (error) {
       return { error };
@@ -766,6 +829,10 @@ export class MongoService<M extends MongoSchema> {
           data: data.toJSON(),
           created_by: owner?.id,
         });
+      }
+
+      if (this.options.cache) {
+        await this.clearCache();
       }
 
       return { data };

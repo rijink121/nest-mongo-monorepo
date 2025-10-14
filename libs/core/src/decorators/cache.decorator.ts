@@ -1,6 +1,7 @@
+import { BaseCacheInterceptor } from '@core/interceptors/base-cache.interceptor';
 import { RoleCacheInterceptor } from '@core/interceptors/role-cache.interceptor';
 import { UserCacheInterceptor } from '@core/interceptors/user-cache.interceptor';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import { applyDecorators, UseInterceptors } from '@nestjs/common';
 
 /**
@@ -123,7 +124,7 @@ export const Cache = (options?: CacheOptions) => {
   } else {
     // Standard caching: Global cache shared by all users
     // Use when data is truly public or when user context doesn't matter
-    decorators.push(UseInterceptors(CacheInterceptor));
+    decorators.push(UseInterceptors(BaseCacheInterceptor));
   }
 
   // Apply custom cache key if specified

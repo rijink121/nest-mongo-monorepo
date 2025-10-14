@@ -7,7 +7,7 @@ import { ProductService } from './product.service';
   imports: [
     MongoModule.register(
       { name: Product.name, schema: ProductSchema },
-      { history: true },
+      { cache: true },
     ),
   ],
   providers: [ProductService],

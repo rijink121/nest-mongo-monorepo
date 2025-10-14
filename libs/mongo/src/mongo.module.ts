@@ -1,3 +1,4 @@
+import { CachingModule } from '@core/modules/caching/caching.module';
 import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import {
   AsyncModelFactory,
@@ -27,6 +28,10 @@ export interface MongoModelOption {
   historyExpireIn?: number;
   /** TTL in days for soft-deleted records. */
   trashExpireIn?: number;
+  /** Enable cache for the model. */
+  cache?: boolean;
+  /** Array of tags to associate with the cache. */
+  cacheTags?: string[];
 }
 
 @Module({})
@@ -58,7 +63,10 @@ export class MongoModule {
   ): DynamicModule {
     return {
       module: DatabaseModule,
-      imports: [MongooseModule.forFeature([model], connectionName)],
+      imports: [
+        MongooseModule.forFeature([model], connectionName),
+        CachingModule,
+      ],
       providers: [
         {
           provide: 'MODEL_NAME',
@@ -85,7 +93,10 @@ export class MongoModule {
   ): DynamicModule {
     return {
       module: DatabaseModule,
-      imports: [MongooseModule.forFeatureAsync([modelFactory], connectionName)],
+      imports: [
+        MongooseModule.forFeatureAsync([modelFactory], connectionName),
+        CachingModule,
+      ],
       providers: [
         {
           provide: 'MODEL_NAME',

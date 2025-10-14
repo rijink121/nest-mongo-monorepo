@@ -1,6 +1,6 @@
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
+import { BaseCacheInterceptor } from './base-cache.interceptor';
 
 /**
  * User-specific cache interceptor that generates cache keys including authenticated user ID.
@@ -29,7 +29,7 @@ import { Request } from 'express';
  * - Enables safe caching of user-specific data
  */
 @Injectable()
-export class UserCacheInterceptor extends CacheInterceptor {
+export class UserCacheInterceptor extends BaseCacheInterceptor {
   /**
    * Generates a user-specific cache key by appending the user ID to the base key.
    *
@@ -41,16 +41,17 @@ export class UserCacheInterceptor extends CacheInterceptor {
     const request: Request = context.switchToHttp().getRequest();
 
     // Generate the base cache key using parent interceptor logic
-    const baseKey = super.trackBy(context);
+    let baseKey = super.trackBy(context);
 
     // Return undefined if base key generation failed
     if (!baseKey) return undefined;
 
     // Append user ID for authenticated requests to ensure user isolation
     if (request.user?.id) {
-      return `${baseKey}:user:${request.user.id}`;
+      baseKey = `${baseKey}:user:${request.user.id}`;
     }
 
+    void super.setKeyTag(context, baseKey);
     // Fall back to base key for unauthenticated requests
     return baseKey;
   }
