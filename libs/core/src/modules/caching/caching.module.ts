@@ -35,6 +35,7 @@ import { CachingService } from './caching.service';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         return {
+          ttl: 60000, // Default TTL of 60 seconds for cache entries
           stores: [
             // In-memory cache with LRU and TTL
             new Keyv({
