@@ -12,18 +12,29 @@ import { CachingService } from './caching.service';
  *
  * This module sets up the NestJS CacheModule with both in-memory and Redis stores using Keyv.
  * It loads Redis configuration from the shared config and makes the cache available globally.
+ * The Redis cache uses the APP_ID as a namespace to isolate cache entries per application.
  *
  * Features:
  * - In-memory cache with LRU and TTL using KeyvCacheableMemory
  * - Redis cache for distributed caching using KeyvRedis
+ * - Application-specific namespace using APP_ID for cache isolation
  * - Global cache availability for all modules
  *
- * Usage:
+ * @example Usage in AppModule
  * ```typescript
  * @Module({
- *   imports: [CachingModule],
+ *   imports: [
+ *     AppConfigModule.register('my-app-id'), // Required: Register APP_ID first
+ *     CachingModule,
+ *   ],
  * })
  * export class AppModule {}
+ * ```
+ *
+ * @example Cache isolation
+ * ```
+ * App 1 (APP_ID: 'api'): Redis keys prefixed with 'api:'
+ * App 2 (APP_ID: 'worker'): Redis keys prefixed with 'worker:'
  * ```
  */
 
@@ -32,16 +43,17 @@ import { CachingService } from './caching.service';
     CacheModule.registerAsync({
       isGlobal: true, // Make cache available globally
       imports: [ConfigModule.forRoot({ load: [redisConfig] })], // Load Redis config
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
+      inject: [ConfigService, 'APP_ID'], // Inject ConfigService and APP_ID
+      useFactory: (config: ConfigService, appId: string) => {
         return {
-          ttl: 60000, // Default TTL of 60 seconds for cache entries
+          ttl: config.get('cache.ttl'), // Default TTL of 60 seconds for cache entries
+          namespace: `${appId}:`, // Use APP_ID for namespace isolation
           stores: [
             // In-memory cache with LRU and TTL
             new Keyv({
-              store: new KeyvCacheableMemory({ ttl: '60s', lruSize: 5000 }),
+              store: new KeyvCacheableMemory({ lruSize: 5000 }),
             }),
-            // Redis cache for distributed caching
+            // Redis cache for distributed caching with app-specific namespace
             new KeyvRedis(config.get('redis.uri')),
           ],
         };

@@ -182,7 +182,7 @@ export default () => {
      * Cache configuration
      */
     cache: <CacheManagerOptions>{
-      ttl: 60,
+      ttl: 60000, // 60 seconds
     },
   };
 };
