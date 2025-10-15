@@ -1,7 +1,6 @@
 import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/strategies/jwt/jwt-auth.guard';
-import { LocalAuthModule } from './modules/auth/strategies/local/local-auth.module';
 import { HistoryModule } from './modules/history/history.module';
 import { ProductRouteModule } from './modules/product/product-route.module';
 import { SessionModule } from './modules/session/session.module';
@@ -16,14 +15,9 @@ export class SharedModule {
 
     switch (appId) {
       case 'main':
-        imports.push(
-          LocalAuthModule,
-          ProductRouteModule,
-          UserRouteModule,
-          SessionModule,
-        );
+        imports.push(ProductRouteModule, UserRouteModule, SessionModule);
         break;
-      case 'admin':
+      case 'app-api':
         imports.push(ProductRouteModule, UserRouteModule, SessionModule);
         break;
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@shared/modules/user/entities/user.entity';
+import { Role } from '@shared/modules/user/role.enum';
 import { UserService } from '@shared/modules/user/user.service';
 import { compareSync } from 'bcrypt';
 import { I18nService } from 'nestjs-i18n';
@@ -68,7 +69,7 @@ export class LocalAuthService {
       const { error, data } = await this.userService.$db.findOneRecord({
         options: {
           projection: '+password', // Include password field in query result
-          where: { email: username },
+          where: { email: username, role: Role.Admin },
           allowEmpty: true, // Don't throw error if user not found
         },
       });

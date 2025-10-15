@@ -10,13 +10,13 @@
   "monorepo": true,
   "root": "apps/main",
   "projects": {
-    "admin": {
+    "app-api": {
       "type": "application",
-      "root": "apps/admin",
+      "root": "apps/app-api",
       "entryFile": "main",
-      "sourceRoot": "apps/admin/src",
+      "sourceRoot": "apps/app-api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/admin/tsconfig.app.json"
+        "tsConfigPath": "apps/app-api/tsconfig.app.json"
       }
     },
     "core": {

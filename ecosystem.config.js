@@ -12,8 +12,8 @@ module.exports = {
       max_memory_restart: '1G',
     },
     {
-      name: `${pkg.name}-admin`,
-      script: 'dist/apps/admin/main.js',
+      name: `${pkg.name}-app-api`,
+      script: 'dist/apps/app-api/main.js',
       instances: 2,
       exec_mode: 'cluster',
       autorestart: true,

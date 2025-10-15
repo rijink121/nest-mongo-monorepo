@@ -8,6 +8,7 @@ import { appId } from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import config from './config';
+import { LocalAuthModule } from './modules/auth/local-auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import config from './config';
       load: [sharedConfig, config],
     }),
     CoreModule.register(appId),
+    LocalAuthModule,
     SharedModule.register(appId),
   ],
   controllers: [AppController],

@@ -9,6 +9,7 @@ import { appId } from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import config from './config';
+import { LocalAuthModule } from './modules/auth/local-auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import config from './config';
     }),
     CoreModule.register(appId),
     MongoModule.root({ seeder: true }),
+    LocalAuthModule,
     SharedModule.register(appId),
   ],
   controllers: [AppController],

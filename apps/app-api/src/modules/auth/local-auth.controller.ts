@@ -24,7 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@shared/modules/user/entities/user.entity';
 import { I18n, I18nContext } from 'nestjs-i18n';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../../../../libs/shared/src/modules/auth/auth.service';
 import { LocalAuthDto } from './local-auth.dto';
 import { LocalAuthGuard } from './local-auth.guard';
 

@@ -2,6 +2,7 @@ import { TrimPipe } from '@core/pipes/trim.pipe';
 import { isPrimaryInstance } from '@core/utils';
 import { env } from '@core/utils/env';
 import { appFilter, getSwaggerConfig } from '@core/utils/swagger';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions } from '@nestjs/microservices';
@@ -32,7 +33,14 @@ async function bootstrap() {
   const appEnv = config.get<Environment>('env');
   if (appEnv !== Environment.Production) {
     /* Morgan logger in non-production env */
-    app.use(morgan('tiny'));
+    const httpLogger = new Logger('HTTP');
+    app.use(
+      morgan('tiny', {
+        stream: {
+          write: (message: string) => httpLogger.log(message.trim()),
+        },
+      }),
+    );
     // Swagger documentation setup in non-production environment
     const document = SwaggerModule.createDocument(
       app,
