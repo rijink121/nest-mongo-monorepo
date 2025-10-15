@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { ReadPayload } from './decorators/payload';
 import { MongoService } from './mongo.service';
+import type { MongoJob } from './utils/job';
 import {
   MongoCountResponse,
   MongoCreateResponse,
   MongoDeleteResponse,
   MongoGetAllResponse,
   MongoGetOneResponse,
-  MongoJob,
   MongoUpdateResponse,
 } from './utils/job';
 import { MongoSchema } from './utils/schema';
 
-type SearchField<M> = keyof M | string;
+export type SearchField<M> = keyof M | string;
 export type SearchFields<M> =
   | SearchField<M>[]
   | Record<string, SearchField<M>[]>;
@@ -188,6 +189,7 @@ export class ModelService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async findAll(job: MongoJob<M>): Promise<MongoGetAllResponse<M>> {
     try {
       await this.doBeforeRead(job);

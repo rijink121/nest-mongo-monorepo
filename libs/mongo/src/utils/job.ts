@@ -155,7 +155,7 @@ export interface MongoCreateBulkResponse<M> extends JobResponse {
 }
 
 // MongoJob interface extends Job and defines the structure for MongoDB job operations
-export interface MongoJob<M extends MongoSchema> extends Job {
+export interface MongoJob<M extends MongoSchema, T = unknown> extends Job<T> {
   /**
    * primary key name of the model
    */
