@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { SessionModule } from '@shared/modules/session/session.module';
 import { UserModule } from '@shared/modules/user/user.module';
-import { AuthModule } from '../../../../../libs/shared/src/modules/auth/auth.module';
 import { LocalAuthController } from './local-auth.controller';
 import { LocalAuthService } from './local-auth.service';
 import { LocalAuthStrategy } from './local-auth.strategy';
 
 @Module({
-  imports: [AuthModule, UserModule],
+  imports: [SessionModule, UserModule],
   controllers: [LocalAuthController],
   providers: [LocalAuthService, LocalAuthStrategy],
 })

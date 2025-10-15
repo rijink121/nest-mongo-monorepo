@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { User } from '@shared/modules/user/entities/user.entity';
 import { Strategy } from 'passport-local';
-import { LocalAuthDto } from './local-auth.dto';
+import { LocalAuthDto } from './dto/local-auth.dto';
 import { LocalAuthService } from './local-auth.service';
 
 /**

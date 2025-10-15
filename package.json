@@ -51,6 +51,7 @@
     "nestjs-cls": "^6.0.1",
     "nestjs-i18n": "^10.5.1",
     "passport": "^0.7.0",
+    "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pluralize-esm": "^9.0.5",

@@ -1,11 +1,15 @@
 import { OWNER_INCLUDE_ATTRIBUTES_KEY } from '@core/decorators/owner-attributes.decorator';
 import { OWNER_INCLUDE_POPULATES_KEY } from '@core/decorators/owner-populates.decorator';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserService } from '../../../user/user.service';
+import { UserService } from '../../user/user.service';
 
 /**
  * JWT payload structure containing authentication session information.
@@ -110,7 +114,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
     });
 
     // Validate user retrieval and active status
-    if (error || !data || !data.active) {
+    if (error) {
+      throw new InternalServerErrorException('Something went wrong');
+    }
+
+    if (!data || !data.active) {
       throw new UnauthorizedException('User not found or inactive');
     }
 

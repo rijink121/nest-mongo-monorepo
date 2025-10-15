@@ -24,9 +24,9 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@shared/modules/user/entities/user.entity';
 import { I18n, I18nContext } from 'nestjs-i18n';
-import { AuthService } from '../../../../../libs/shared/src/modules/auth/auth.service';
-import { LocalAuthDto } from './local-auth.dto';
+import { LocalAuthDto } from './dto/local-auth.dto';
 import { LocalAuthGuard } from './local-auth.guard';
+import { LocalAuthService } from './local-auth.service';
 
 @ApiTags('auth')
 @ApiUnauthorizedResponse(ResponseUnauthorized)
@@ -34,7 +34,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 @ApiExtraModels(User)
 @Controller('auth/local')
 export class LocalAuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly localAuthService: LocalAuthService) {}
 
   /**
    * Login with username and password
@@ -66,7 +66,7 @@ export class LocalAuthController {
     @Ip() ip: string,
     @I18n() i18n: I18nContext,
   ) {
-    const { error, data } = await this.authService.createSession(owner, {
+    const { error, data } = await this.localAuthService.createSession(owner, {
       ...body.info,
       ip,
     });

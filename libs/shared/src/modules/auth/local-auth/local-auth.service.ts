@@ -1,10 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { OwnerDto } from '@core/types/owner';
+import { JobResponse } from '@core/utils/job';
+import { Inject, Injectable } from '@nestjs/common';
+import { SessionService } from '@shared/modules/session/session.service';
 import { User } from '@shared/modules/user/entities/user.entity';
 import { Role } from '@shared/modules/user/role.enum';
 import { UserService } from '@shared/modules/user/user.service';
 import { compareSync } from 'bcrypt';
+import { randomBytes } from 'crypto';
 import { I18nService } from 'nestjs-i18n';
-import { LocalAuthDto } from './local-auth.dto';
+import { SessionData } from '../../../definitions/session';
+import { JwtPayload } from '../jwt-auth/jwt-auth.strategy';
+import { LocalAuthDto } from './dto/local-auth.dto';
 
 /**
  * Response structure for authentication operations.
@@ -28,6 +34,8 @@ export interface AuthResponse {
 @Injectable()
 export class LocalAuthService {
   constructor(
+    @Inject('APP_ID') private readonly appId: string,
+    private readonly sessionService: SessionService,
     private readonly userService: UserService,
     private readonly i18n: I18nService,
   ) {}
@@ -69,7 +77,10 @@ export class LocalAuthService {
       const { error, data } = await this.userService.$db.findOneRecord({
         options: {
           projection: '+password', // Include password field in query result
-          where: { email: username, role: Role.Admin },
+          where: {
+            email: username,
+            role: this.appId === 'main' ? Role.Admin : Role.User,
+          },
           allowEmpty: true, // Don't throw error if user not found
         },
       });
@@ -102,6 +113,46 @@ export class LocalAuthService {
       return { user: data };
     } catch (error: unknown) {
       // Handle unexpected errors during authentication
+      return { error };
+    }
+  }
+
+  async createSession(
+    owner: OwnerDto,
+    info: Record<string, unknown>,
+  ): Promise<JobResponse<SessionData>> {
+    try {
+      const refreshToken = randomBytes(40).toString('hex');
+      const { error, data } = await this.sessionService.create({
+        action: 'create',
+        owner,
+        body: {
+          token: refreshToken,
+          token_expiry: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+          user_id: owner.userId,
+          info,
+        },
+      });
+      if (error || !data) return { error };
+      const { data: tokenData, error: tokenError } =
+        await this.sessionService.createToken<JwtPayload>({
+          sessionId: data._id.toString(),
+          userId: owner.id,
+        });
+      if (tokenError || !tokenData) {
+        return { error: tokenError };
+      }
+      return {
+        error: false,
+        data: {
+          token: tokenData.token,
+          token_expiry: tokenData.tokenExpiry,
+          refresh_token: refreshToken,
+          user: owner,
+          session_id: data._id.toString(),
+        },
+      };
+    } catch (error) {
       return { error };
     }
   }

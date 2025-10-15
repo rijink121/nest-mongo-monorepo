@@ -99,7 +99,9 @@ export class SessionService extends ModelService<Session> {
    * const user = data.payload;
    * ```
    */
-  async verifyToken<T extends object>(token: string): Promise<JobResponse> {
+  async verifyToken<T extends object>(
+    token: string,
+  ): Promise<JobResponse<{ payload: T }>> {
     try {
       // Retrieve JWT secret from configuration
       const { secret } = this.configService.getOrThrow<JwtModuleOptions>('jwt');
@@ -156,13 +158,15 @@ export class SessionService extends ModelService<Session> {
    * }
    * ```
    */
-  decodeToken<T extends object>(token: string): JobResponse {
+  async decodeToken<T extends object>(
+    token: string,
+  ): Promise<JobResponse<{ payload: T }>> {
     try {
       // Retrieve JWT secret from configuration
       const { secret } = this.configService.getOrThrow<JwtModuleOptions>('jwt');
 
       // Decode token ignoring expiration (still verifies signature)
-      const decoded: T = this.jwtService.verify(token, {
+      const decoded: T = await this.jwtService.verifyAsync(token, {
         secret,
         ignoreExpiration: true, // Skip expiration check but verify signature
       });
