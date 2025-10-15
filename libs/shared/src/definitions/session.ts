@@ -6,5 +6,5 @@ export class SessionData {
   token: string;
   token_expiry: Moment;
   refresh_token: string;
-  user: OwnerDto;
+  user: Partial<OwnerDto>;
 }

@@ -1,6 +1,9 @@
-import { ApiErrorResponses } from '@core/decorators/api.decorator';
 import { Owner } from '@core/decorators/owner.decorator';
 import { Public } from '@core/decorators/public.decorator';
+import {
+  ResponseInternalServerError,
+  ResponseUnauthorized,
+} from '@core/definitions/api-response.dto';
 import {
   Body,
   Controller,
@@ -8,14 +11,21 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Session } from '@shared/modules/session/entities/session.entity';
 import { TokenAuthDto } from './token-auth.dto';
 import { TokenAuthGuard } from './token-auth.guard';
 import { TokenAuthService } from './token-auth.service';
 
 @ApiTags('auth')
-@ApiErrorResponses()
+@ApiUnauthorizedResponse(ResponseUnauthorized)
+@ApiInternalServerErrorResponse(ResponseInternalServerError)
 @Controller('auth')
 export class TokenAuthController {
   constructor(private readonly tokenAuthService: TokenAuthService) {}

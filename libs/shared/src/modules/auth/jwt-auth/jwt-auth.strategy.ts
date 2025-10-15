@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import { UserService } from '@shared/modules/user/user.service';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserService } from '../../user/user.service';
 
 /**
  * JWT payload structure containing authentication session information.

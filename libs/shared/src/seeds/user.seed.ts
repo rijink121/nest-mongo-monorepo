@@ -1,6 +1,6 @@
 import { Seed } from '@lib/mongo/modules/seeder';
+import { Role } from '@shared/definitions/role.enum';
 import { User } from '@shared/modules/user/entities/user.entity';
-import { Role } from '@shared/modules/user/role.enum';
 
 const seed: Seed<User> = {
   model: 'User',

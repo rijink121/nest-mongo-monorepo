@@ -1,14 +1,14 @@
 import { OwnerDto } from '@core/types/owner';
 import { JobResponse } from '@core/utils/job';
 import { Inject, Injectable } from '@nestjs/common';
+import { Role } from '@shared/definitions/role.enum';
+import { SessionData } from '@shared/definitions/session';
 import { SessionService } from '@shared/modules/session/session.service';
 import { User } from '@shared/modules/user/entities/user.entity';
-import { Role } from '@shared/modules/user/role.enum';
 import { UserService } from '@shared/modules/user/user.service';
 import { compareSync } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { I18nService } from 'nestjs-i18n';
-import { SessionData } from '../../../definitions/session';
 import { JwtPayload } from '../jwt-auth/jwt-auth.strategy';
 import { LocalAuthDto } from './dto/local-auth.dto';
 

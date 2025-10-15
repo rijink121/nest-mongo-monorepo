@@ -32,14 +32,14 @@ import { LocalAuthService } from './local-auth.service';
 @ApiUnauthorizedResponse(ResponseUnauthorized)
 @ApiInternalServerErrorResponse(ResponseInternalServerError)
 @ApiExtraModels(User)
-@Controller('auth/local')
+@Controller('auth')
 export class LocalAuthController {
   constructor(private readonly localAuthService: LocalAuthService) {}
 
   /**
    * Login with username and password
    */
-  @Post('')
+  @Post('local')
   @Public()
   @ApiOperation({ summary: 'Local authentication' })
   @ApiOkResponse({

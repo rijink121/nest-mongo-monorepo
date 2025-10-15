@@ -6,9 +6,9 @@ import {
 import { PassportStrategy } from '@nestjs/passport';
 import { Session } from '@shared/modules/session/entities/session.entity';
 import { SessionService } from '@shared/modules/session/session.service';
+import { UserService } from '@shared/modules/user/user.service';
 import { Request } from 'express';
 import { Strategy } from 'passport-custom';
-import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class TokenAuthStrategy extends PassportStrategy(Strategy, 'authtoken') {

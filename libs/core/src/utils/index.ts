@@ -112,3 +112,13 @@ export const isPrimaryInstance = (): boolean =>
  * const id = uuid(); // '6ba7b810-9dad-11d1-80b4-00c04fd430c8'
  */
 export const uuid = (): string => uuidv1();
+
+export const otp = (length = 6): string =>
+  process.env.OTP_TEST_MODE === 'Y'
+    ? Array(length)
+        .fill(null)
+        .map((e, i) => i + 1)
+        .join('')
+    : `${Math.floor(
+        Math.pow(10, length - 1) + Math.random() * 9 * Math.pow(10, length - 1),
+      )}`;

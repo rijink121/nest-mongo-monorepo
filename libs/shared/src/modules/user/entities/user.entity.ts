@@ -5,6 +5,7 @@ import {
 } from '@lib/mongo/utils/schema';
 import { Prop, Schema } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '@shared/definitions/role.enum';
 import {
   IsBoolean,
   IsEmail,
@@ -15,7 +16,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import { Role } from '../role.enum';
 
 export type UserDocument = HydratedDocument<User>;
 
