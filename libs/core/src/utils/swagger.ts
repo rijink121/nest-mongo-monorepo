@@ -10,19 +10,6 @@ import {
 } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 /**
- * Global window interface extension for Swagger UI.
- * Provides access to Swagger UI's preauthorization functionality.
- */
-declare global {
-  interface Window {
-    ui: {
-      /** Preauthorizes an API key in Swagger UI */
-      preauthorizeApiKey: (key: string, value: string) => void;
-    };
-  }
-}
-
-/**
  * Extended operation object interface with optional 'x-apps' property.
  * This allows filtering of API endpoints based on application names.
  *
@@ -30,33 +17,6 @@ declare global {
  */
 export interface ExtendedOperationObject extends OperationObject {
   'x-apps'?: string[];
-}
-
-/**
- * Interface representing a Swagger UI response object.
- * Used for intercepting and processing API responses in Swagger UI.
- */
-interface SwaggerResponse {
-  /** Whether the request was successful */
-  ok: boolean;
-  /** The request URL */
-  url: string;
-  /** HTTP status code */
-  status: number;
-  /** HTTP status text */
-  statusText: string;
-  /** Response headers */
-  headers: Record<string, string>;
-  /** Response text */
-  text: string;
-  /** Response data (generic) */
-  data?: unknown;
-  /** Response body with structured data */
-  body?: {
-    data?: Record<string, unknown>;
-  };
-  /** Original request configuration */
-  config?: unknown;
 }
 
 /**
@@ -166,39 +126,6 @@ export const getSwaggerConfig = (appName: string, appVersion: string) =>
  */
 export const getSwaggerUIOptions = (): SwaggerCustomOptions => ({
   swaggerOptions: {
-    /**
-     * Intercepts API responses to capture authentication tokens.
-     * When a successful login occurs, the token is automatically saved
-     * and pre-authorized for subsequent requests.
-     */
-    responseInterceptor: (res: SwaggerResponse) => {
-      const url = res.url || '';
-
-      // Check if this is a login response with a token
-      if (url.includes('/auth/local') && res?.body?.data?.token) {
-        const token = res.body.data['token'] as string;
-
-        // Save token to localStorage for persistence
-        localStorage.setItem('swagger-token', token);
-
-        // Automatically authorize the token in Swagger UI
-        window.ui.preauthorizeApiKey('bearer', token);
-      }
-
-      return res;
-    },
-
-    /**
-     * Runs when Swagger UI finishes loading.
-     * Restores any previously saved authentication token.
-     */
-    onComplete: () => {
-      const savedToken = localStorage.getItem('swagger-token');
-
-      if (savedToken) {
-        // Restore the saved token to Swagger UI
-        window.ui.preauthorizeApiKey('bearer', savedToken);
-      }
-    },
+    persistAuthorization: true,
   },
 });
