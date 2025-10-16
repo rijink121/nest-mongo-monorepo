@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ReadPayload } from './decorators/payload';
+import { DeletePayload, ReadPayload, WritePayload } from './decorators/payload';
 import { MongoService } from './mongo.service';
 import type { MongoJob } from './utils/job';
 import {
@@ -209,6 +209,7 @@ export class ModelService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async getCount(job: MongoJob<M>): Promise<MongoCountResponse> {
     try {
       await this.doBeforeRead(job);
@@ -228,6 +229,7 @@ export class ModelService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async findById(job: MongoJob<M>): Promise<MongoGetOneResponse<M>> {
     try {
       await this.doBeforeRead(job);
@@ -247,6 +249,7 @@ export class ModelService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async findOne(job: MongoJob<M>): Promise<MongoGetOneResponse<M>> {
     try {
       await this.doBeforeRead(job);
@@ -266,6 +269,7 @@ export class ModelService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @WritePayload
   async create(job: MongoJob<M>): Promise<MongoCreateResponse<M>> {
     try {
       await this.doBeforeWrite(job);
@@ -286,6 +290,7 @@ export class ModelService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @WritePayload
   async update(job: MongoJob<M>): Promise<MongoUpdateResponse<M>> {
     try {
       await this.doBeforeWrite(job);
@@ -306,6 +311,7 @@ export class ModelService<M extends MongoSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @DeletePayload
   async delete(job: MongoJob<M>): Promise<MongoDeleteResponse<M>> {
     try {
       await this.doBeforeDelete(job);

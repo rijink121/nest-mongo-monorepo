@@ -263,13 +263,19 @@ export class ApiQuery {
  * DTO for create operation queries.
  * Only includes populate for relation handling during creation.
  */
-export class ApiQueryCreate extends PickType(ApiQuery, ['populate']) {}
+export class ApiQueryCreate extends PickType(ApiQuery, [
+  'select',
+  'populate',
+]) {}
 
 /**
  * DTO for update operation queries.
  * Only includes populate for relation handling during updates.
  */
-export class ApiQueryUpdate extends PickType(ApiQuery, ['populate']) {}
+export class ApiQueryUpdate extends PickType(ApiQuery, [
+  'select',
+  'populate',
+]) {}
 
 /**
  * DTO for get all records operation.
