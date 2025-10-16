@@ -341,9 +341,9 @@ export class MongoService<M extends MongoSchema> {
       const { options = {} } = job;
       const { where = {}, projection, pagination = false } = options;
       options.limit = options.limit
-        ? +options.limit === -1
+        ? options.limit === -1
           ? this._config.get('paginationMaxLimit')
-          : +options.limit
+          : options.limit
         : this._config.get('paginationLimit');
       if (pagination) {
         const [data, count] = await Promise.all([

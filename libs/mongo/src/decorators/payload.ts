@@ -3,23 +3,38 @@ import { BadRequestException } from '@nestjs/common';
 import { isObject } from 'class-validator';
 import { FilterQuery, PopulateOptions } from 'mongoose';
 import { ModelService, SearchField } from '../model.service';
-import { parseFieldsProjection } from '../utils';
+import { buildPopulateTree, parseFieldsProjection } from '../utils';
 import type { MongoJob } from '../utils/job';
 import type { MongoSchema } from '../utils/schema';
 
+/**
+ * Type definition for async methods that can be decorated with @ReadPayload.
+ */
 type AsyncMethodDecorator<M extends MongoSchema> = (
   this: ModelService<M>,
   job: MongoJob<M, ApiQuery>,
 ) => Promise<unknown>;
 
+/**
+ * Interface representing the normalized payload data structure
+ * extracted from API query parameters.
+ */
 interface ReadPayloadData {
+  /** Maximum number of records to return */
   limit?: number;
+  /** Number of records to skip (for pagination) */
   offset?: number;
+  /** Sort criteria as array of field names or [field, direction] tuples */
   sort?: (string | string[])[];
+  /** Search term or scoped search [scope, term] */
   search?: string | string[];
+  /** Fields to include in response */
   select?: string[];
+  /** Filter conditions */
   where?: Record<string, unknown>;
+  /** Relations to populate */
   populate?: string[];
+  /** Predefined query scopes */
   scope?: (string | [string, ...(string | number)[]])[];
 }
 
@@ -64,22 +79,31 @@ export const ReadPayload = <M extends MongoSchema>(
   ): Promise<unknown> {
     const { payload, options } = job;
 
-    // Extract and normalize payload data with defaults
+    // ============================================
+    // 1. Extract and normalize payload data
+    // ============================================
     const readPayload: ReadPayloadData = {
-      limit: payload?.limit ?? 10,
-      offset: payload?.offset ?? 0,
+      limit: payload?.limit,
+      offset: payload?.offset,
       sort: payload?.sort,
       search: payload?.search,
       select: payload?.select,
       where: payload?.where,
       populate: payload?.populate,
-      scope: payload?.scope,
     };
 
-    // Process select payload
-    const attributesWithPath = parseFieldsProjection(readPayload.select || []);
+    // ============================================
+    // 2. Process field selection (select)
+    // ============================================
+    const attributesWithPopulate = parseFieldsProjection(
+      readPayload.select || [],
+    );
 
+    // ============================================
+    // 3. Process where conditions and search
+    // ============================================
     const where: FilterQuery<M> = (readPayload.where as FilterQuery<M>) ?? {};
+
     // Process search functionality
     if (readPayload.search && this.searchFields) {
       // Determine search scope and key
@@ -129,45 +153,59 @@ export const ReadPayload = <M extends MongoSchema>(
       where.$and.push({ $or: searchConditions as FilterQuery<M>[] });
     }
 
+    // ============================================
+    // 4. Process sort options
+    // ============================================
     let sort: Record<string, 'asc' | 'desc'> | undefined = undefined;
-    // Convert sort payload
+
     if (readPayload.sort) {
       sort = readPayload.sort.reduce((accumulator, currentValue) => {
-        return typeof currentValue === 'string'
-          ? {
-              ...accumulator,
-              [currentValue]: 'asc',
-            }
-          : {
-              ...accumulator,
-              [currentValue[0]]: currentValue[1],
-            };
+        // Handle both string and [field, direction] formats
+        if (typeof currentValue === 'string') {
+          return {
+            ...accumulator,
+            [currentValue]: 'asc',
+          };
+        } else {
+          return {
+            ...accumulator,
+            [currentValue[0]]: currentValue[1],
+          };
+        }
       }, {});
     }
 
+    // ============================================
+    // 5. Process populate options
+    // ============================================
     let populate: PopulateOptions[] = [];
-    // Process populate payload
+
+    // Build populate tree from explicit populate fields
     if (readPayload.populate) {
-      populate = readPayload.populate.map((item) => ({ path: item }));
+      populate = buildPopulateTree(readPayload.populate);
     }
 
-    if (attributesWithPath.paths && attributesWithPath.paths.length > 0) {
-      populate = [...populate, ...attributesWithPath.paths];
+    // Merge populate options from field selection
+    if (
+      attributesWithPopulate.populate &&
+      attributesWithPopulate.populate.length > 0
+    ) {
+      populate = [...populate, ...attributesWithPopulate.populate];
     }
 
-    // Construct MongoDB options from processed payload
+    // ============================================
+    // 6. Construct final MongoDB options
+    // ============================================
     job.options = {
       where: Object.keys(where).length > 0 ? where : undefined,
       populate,
       sort,
-      projection: attributesWithPath.select || undefined,
+      projection: attributesWithPopulate.select || undefined,
       skip: readPayload.offset,
       limit: readPayload.limit,
       pagination: true,
       ...options, // Preserve any existing options
     };
-
-    console.log(job.options);
 
     return await original.call(this, job);
   };

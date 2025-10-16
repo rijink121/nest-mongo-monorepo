@@ -1,40 +1,160 @@
 import { PopulateOptions } from 'mongoose';
 
-type PathNode = {
+/**
+ * Represents a node in the field projection tree structure.
+ * Used to organize field selections and nested populate operations.
+ */
+type AttributeNode = {
+  /** The path/name of this node */
   path: string;
+  /** Space-separated string of field names to select */
   select: string;
-  paths?: PopulateOptions[];
+  /** Optional nested populate operations */
+  populate?: PopulateOptions[];
 };
 
-export function parseFieldsProjection(fields: string[]): PathNode {
-  // Recursive builder function
-  function buildTree(path: string, keys: string[]): PathNode {
+/**
+ * Represents a node in the populate tree structure.
+ * Used to build nested Mongoose populate operations.
+ */
+type PopulateNode = {
+  /** The path/field to populate */
+  path: string;
+  /** Nested populate operations */
+  populate: PopulateNode[];
+};
+
+/**
+ * Parses an array of dot-notation field paths into a structured projection tree.
+ *
+ * This function processes field selections that may include nested relations
+ * (e.g., ['id', 'name', 'country.name', 'country.code']) and converts them into
+ * a tree structure with separate select and populate operations.
+ *
+ * @param fields - Array of field paths in dot-notation (e.g., ['name', 'user.email'])
+ * @returns An AttributeNode containing select fields and nested populate operations
+ *
+ * @example
+ * ```typescript
+ * const fields = ['id', 'name', 'country.name', 'country.code'];
+ * const result = parseFieldsProjection(fields);
+ * // Result: {
+ * //   path: 'default',
+ * //   select: 'id name',
+ * //   populate: [
+ * //     { path: 'country', select: 'name code' }
+ * //   ]
+ * // }
+ * ```
+ */
+export function parseFieldsProjection(fields: string[]): AttributeNode {
+  /**
+   * Recursively builds a tree structure from field paths.
+   *
+   * @param path - The current path/node name
+   * @param keys - Array of field keys to process
+   * @returns An AttributeNode with select and populate information
+   */
+  function buildTree(path: string, keys: string[]): AttributeNode {
     const attributes: string[] = [];
     const grouped: Record<string, string[]> = {};
 
+    // Separate direct fields from nested fields
     for (const key of keys) {
       const parts = key.split('.');
+
       if (parts.length === 1) {
+        // Direct field - add to select list
         attributes.push(parts[0]);
       } else {
+        // Nested field - group by first part
         const [first, ...rest] = parts;
-        if (!grouped[first]) grouped[first] = [];
+        if (!grouped[first]) {
+          grouped[first] = [];
+        }
         grouped[first].push(rest.join('.'));
       }
     }
 
-    const node: PathNode = {
+    // Create node with select fields
+    const node: AttributeNode = {
       path,
       select: attributes.join(' '),
     };
 
+    // Process nested paths recursively
     const subPaths = Object.entries(grouped).map(([child, childKeys]) =>
       buildTree(child, childKeys),
     );
 
-    if (subPaths.length) node.paths = subPaths;
+    if (subPaths.length > 0) {
+      node.populate = subPaths;
+    }
+
     return node;
   }
 
   return buildTree('default', fields);
+}
+
+/**
+ * Builds a nested Mongoose populate structure from dot-notation paths.
+ *
+ * Converts an array of dot-notation strings into a hierarchical structure
+ * suitable for Mongoose's populate() method. This allows for deep population
+ * of related documents.
+ *
+ * @param fields - Array of dot-notation paths (e.g., ['user', 'user.profile', 'comments'])
+ * @returns Array of PopulateNode objects representing the populate structure
+ *
+ * @example
+ * ```typescript
+ * const fields = ['user', 'user.profile', 'user.profile.avatar', 'comments'];
+ * const result = buildPopulateTree(fields);
+ * // Result: [
+ * //   {
+ * //     path: 'user',
+ * //     populate: [
+ * //       {
+ * //         path: 'profile',
+ * //         populate: [
+ * //           { path: 'avatar', populate: [] }
+ * //         ]
+ * //       }
+ * //     ]
+ * //   },
+ * //   { path: 'comments', populate: [] }
+ * // ]
+ * ```
+ */
+export function buildPopulateTree(fields: string[]): PopulateNode[] {
+  const root: Record<string, unknown> = {};
+
+  // Build tree structure from dot-notation paths
+  for (const field of fields) {
+    const parts = field.split('.');
+    let current = root;
+
+    // Navigate/create nested structure
+    for (const part of parts) {
+      if (!current[part]) {
+        current[part] = {};
+      }
+      current = current[part] as Record<string, unknown>;
+    }
+  }
+
+  /**
+   * Recursively converts a plain object tree into an array of PopulateNode objects.
+   *
+   * @param obj - The object to convert
+   * @returns Array of PopulateNode objects
+   */
+  const toPopulateNodes = (obj: Record<string, unknown>): PopulateNode[] =>
+    Object.entries(obj).map(([key, value]) => ({
+      path: key,
+      populate: toPopulateNodes(value as Record<string, unknown>),
+    }));
+
+  return toPopulateNodes(root);
 }
