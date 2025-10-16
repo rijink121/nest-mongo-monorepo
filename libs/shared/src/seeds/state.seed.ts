@@ -1,7 +1,7 @@
 import { Seed, SeedReference } from '@lib/mongo/modules/seeder';
 import type { State } from '@shared/modules/state/entities/state.entity';
 
-const seed: Seed<Omit<State, 'country_id'>> = {
+const seed: Seed<Omit<State, 'country_id'> & { country_id: SeedReference }> = {
   model: 'State',
   action: 'once',
   data: [

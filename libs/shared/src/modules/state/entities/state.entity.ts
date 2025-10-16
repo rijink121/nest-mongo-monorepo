@@ -1,4 +1,4 @@
-import { MongoBelongsTo } from '@lib/mongo/decorators/populate';
+import { MongoBelongsTo, MongoHasMany } from '@lib/mongo/decorators/populate';
 import {
   createMongoSchema,
   defaultSchemaOptions,
@@ -48,5 +48,13 @@ export class State extends MongoSchema {
     type: () => Country,
   })
   country: Country;
+
+  @MongoHasMany('City', 'state_id')
+  @ApiProperty({
+    description: 'Cities relation',
+    type: () => Array,
+    required: false,
+  })
+  cities?: unknown[];
 }
 export const StateSchema = createMongoSchema(State);

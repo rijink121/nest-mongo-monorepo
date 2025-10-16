@@ -5,6 +5,7 @@ import { JwtAuthModule } from './modules/auth/jwt-auth/jwt-auth.module';
 import { LocalAuthModule } from './modules/auth/local-auth/local-auth.module';
 import { RecoveryModule } from './modules/auth/recovery/recovery.module';
 import { TokenAuthModule } from './modules/auth/token-auth/token-auth.module';
+import { CityRouteModule } from './modules/city/city-route.module';
 import { CountryRouteModule } from './modules/country/country-route.module';
 import { HistoryModule } from './modules/history/history.module';
 import { OtpSessionModule } from './modules/otp-session/otp-session.module';
@@ -33,6 +34,7 @@ export class SharedModule {
           UserRouteModule,
           CountryRouteModule,
           StateRouteModule,
+          CityRouteModule,
           SessionModule,
         );
         break;
@@ -46,6 +48,7 @@ export class SharedModule {
           UserRouteModule,
           CountryRouteModule,
           StateRouteModule,
+          CityRouteModule,
           SessionModule,
         );
         break;
