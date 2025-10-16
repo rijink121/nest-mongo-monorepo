@@ -86,7 +86,7 @@ export class ApiQuery {
     },
     required: false,
   })
-  @Transform(transformJSON)
+  @Transform(({ value }) => transformJSON({ value, allowNonJSON: true }))
   @IsOptional()
   @IsStringOrStringArray()
   /** Search keyword or array containing scope and search term */
@@ -117,6 +117,7 @@ export class ApiQuery {
   })
   @Transform(transformJSON)
   @IsOptional()
+  @IsArray()
   @IsString({ each: true })
   /** Array of field names to include in response */
   select: string[];
@@ -188,6 +189,7 @@ export class ApiQuery {
   })
   @Transform(transformJSON)
   @IsOptional()
+  @IsArray()
   @IsString({ each: true })
   /** Array of relation names to populate in the response */
   populate: string[];

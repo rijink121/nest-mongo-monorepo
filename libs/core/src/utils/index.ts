@@ -17,38 +17,51 @@ export const addDays = (days: number): Date => {
 };
 
 /**
- * Safely parses a JSON string and returns the parsed object or undefined if parsing fails.
+ * Safely parses a JSON string and returns the parsed object or false if parsing fails.
  *
  * @param str - The JSON string to parse
- * @returns The parsed object of type T, or undefined if parsing fails
+ * @returns The parsed object of type T, or false if parsing fails
  *
  * @example
- * const data = parseJSON<{name: string}>("{\"name\": \"John\"}"); // {name: "John"}
- * const invalid = parseJSON('invalid json'); // undefined
+ * const data = parseJSON<{name: string}>('{"name": "John"}'); // {name: "John"}
+ * const invalid = parseJSON('invalid json'); // false
  */
-export const parseJSON = <T = unknown>(str: string): T | undefined => {
+export const parseJSON = <T = unknown>(str: string): T | false => {
   try {
     return JSON.parse(str) as T;
   } catch {
-    // Return undefined if parsing fails
-    return undefined;
+    // Return false if parsing fails
+    return false;
   }
 };
 
 /**
- * Transforms JSON string values to parsed objects or returns the original value if not a string.
+ * Transforms JSON string values to parsed objects or returns the original value.
  * Used for query parameters that may be passed as JSON strings in HTTP requests.
  *
  * @param value - The value to transform (typically from class-transformer)
- * @returns The parsed object if value is a JSON string, otherwise the original value
+ * @param allowNonJSON - If true, returns the original string when JSON parsing fails; if false, returns false
+ * @returns The parsed object if value is a valid JSON string, the original value if not a string,
+ *          or false/original string (based on allowNonJSON) if JSON parsing fails
  *
  * @example
  * transformJSON({ value: '{"key": "value"}' }); // {key: "value"}
  * transformJSON({ value: 42 }); // 42
- * transformJSON({ value: 'plain string' }); // undefined (invalid JSON)
+ * transformJSON({ value: 'plain string' }); // false (invalid JSON)
+ * transformJSON({ value: 'plain string', allowNonJSON: true }); // 'plain string'
  */
-export const transformJSON = ({ value }: { value: unknown }): unknown => {
-  return typeof value === 'string' ? parseJSON<unknown>(value) : value;
+export const transformJSON = ({
+  value,
+  allowNonJSON,
+}: {
+  value: unknown;
+  allowNonJSON?: boolean;
+}): unknown => {
+  return typeof value === 'string'
+    ? allowNonJSON
+      ? parseJSON<unknown>(value) || value
+      : parseJSON<unknown>(value)
+    : value;
 };
 
 /**
@@ -59,6 +72,8 @@ export const transformJSON = ({ value }: { value: unknown }): unknown => {
  *
  * @example
  * pluralizeString('user'); // 'users'
+ * pluralizeString('child'); // 'children'
+ * pluralizeString('person'); // 'people'
  */
 export const pluralizeString = (str: string): string => pluralize(str);
 
@@ -113,6 +128,20 @@ export const isPrimaryInstance = (): boolean =>
  */
 export const uuid = (): string => uuidv1();
 
+/**
+ * Generates a numeric OTP (One-Time Password) of specified length.
+ *
+ * In test mode (OTP_TEST_MODE='Y'), returns a sequential number (e.g., '123456' for length 6).
+ * In production mode, generates a random numeric OTP of the specified length.
+ *
+ * @param length - The length of the OTP to generate (default: 6)
+ * @returns A string representing the OTP
+ *
+ * @example
+ * const otp1 = otp(); // '847392' (random 6-digit number)
+ * const otp2 = otp(4); // '5829' (random 4-digit number)
+ * // In test mode: otp(6) returns '123456'
+ */
 export const otp = (length = 6): string =>
   process.env.OTP_TEST_MODE === 'Y'
     ? Array(length)
