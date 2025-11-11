@@ -5,7 +5,7 @@ import { OtpSessionService } from './otp-session.service';
 
 @Module({
   imports: [
-    MongoModule.register({ name: OtpSession.name, schema: OtpSessionSchema }),
+    MongoModule.forFeature({ name: OtpSession.name, schema: OtpSessionSchema }),
   ],
   providers: [OtpSessionService],
   exports: [OtpSessionService],

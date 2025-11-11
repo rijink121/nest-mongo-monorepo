@@ -8,7 +8,7 @@ import { SessionService } from './session.service';
 
 @Module({
   imports: [
-    MongoModule.register({ name: Session.name, schema: SessionSchema }),
+    MongoModule.forFeature({ name: Session.name, schema: SessionSchema }),
     ConfigModule,
     JwtModule.registerAsync({
       imports: [

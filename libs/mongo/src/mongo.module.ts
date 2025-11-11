@@ -11,42 +11,49 @@ import { MongoService } from './mongo.service';
 import { UniqueValidator } from './utils/unique-validator';
 
 /**
- * Root-level options for MongoModule.
+ * Root-level configuration options for MongoModule.
  */
 export interface MongoModuleOption {
-  /** Enable database seeder module when true. */
+  /** Enable database seeder module. */
   seeder?: boolean;
 }
 
 /**
- * Per-model options to control additional behaviors.
+ * Per-model configuration options to control additional behaviors.
  */
 export interface MongoModelOption {
-  /** Enable history tracking for the model. */
+  /** Enable automatic history tracking for create, update, delete, and restore operations. */
   history?: boolean;
-  /** TTL in days for history records, when history is enabled. */
+  /** Number of days before history records expire and are automatically deleted. */
   historyExpireIn?: number;
-  /** TTL in days for soft-deleted records. */
+  /** Number of days before hard-deleted records in trash expire and are permanently removed. */
   trashExpireIn?: number;
-  /** Enable cache for the model. */
+  /** Enable automatic cache management with invalidation on data changes. */
   cache?: boolean;
-  /** Array of tags to associate with the cache. */
+  /** Cache tag identifiers for targeted cache invalidation (defaults to snake_case model name). */
   cacheTags?: string[];
 }
 
 @Module({})
 export class MongoModule {
   /**
-   * Configure and return the root module, optionally enabling the seeder.
+   * Configure the root MongoModule with global options.
+   *
+   * This method initializes the MongoDB module with database connection
+   * and optionally enables the seeder module for database initialization.
+   *
+   * @param options - Root module configuration options
+   * @returns Configured dynamic module
    */
-  static root(options?: MongoModuleOption): DynamicModule {
+  static forRoot(options?: MongoModuleOption): DynamicModule {
     const imports: ModuleMetadata['imports'] = [];
     imports.push(DatabaseModule);
 
-    // Optionally include the seeder module
+    // Include the seeder module if enabled
     if (options?.seeder) {
       imports.push(SeederModule);
     }
+
     return {
       module: MongoModule,
       imports,
@@ -54,9 +61,17 @@ export class MongoModule {
   }
 
   /**
-   * Register a model with optional per-model options and an optional connection name.
+   * Register a Mongoose model for use in a feature module.
+   *
+   * This method sets up a model with MongoService, providing CRUD operations,
+   * history tracking, caching, and other advanced features based on the options.
+   *
+   * @param model - Mongoose model definition (schema and name)
+   * @param options - Per-model configuration options
+   * @param connectionName - Optional custom connection name (uses default if not provided)
+   * @returns Configured dynamic module with MongoService
    */
-  static register(
+  static forFeature(
     model: ModelDefinition,
     options?: MongoModelOption,
     connectionName?: string,
@@ -84,9 +99,17 @@ export class MongoModule {
   }
 
   /**
-   * Register a model asynchronously using a factory, with optional options and connection name.
+   * Register a Mongoose model asynchronously using a factory for use in a feature module.
+   *
+   * This method is similar to forFeature but allows for async model definition,
+   * useful when the schema depends on configuration or other async resources.
+   *
+   * @param modelFactory - Async factory for creating the model definition
+   * @param options - Per-model configuration options
+   * @param connectionName - Optional custom connection name (uses default if not provided)
+   * @returns Configured dynamic module with MongoService
    */
-  static registerAsync(
+  static forFeatureAsync(
     modelFactory: AsyncModelFactory,
     options?: MongoModelOption,
     connectionName?: string,

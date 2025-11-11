@@ -5,7 +5,7 @@ import { ProductService } from './product.service';
 
 @Module({
   imports: [
-    MongoModule.register(
+    MongoModule.forFeature(
       { name: Product.name, schema: ProductSchema },
       { cache: true },
     ),

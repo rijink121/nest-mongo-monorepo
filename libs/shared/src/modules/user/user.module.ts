@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [
-    MongoModule.registerAsync({
+    MongoModule.forFeatureAsync({
       name: User.name,
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {

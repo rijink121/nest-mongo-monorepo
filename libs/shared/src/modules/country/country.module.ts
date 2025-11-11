@@ -5,7 +5,7 @@ import { Country, CountrySchema } from './entities/country.entity';
 
 @Module({
   imports: [
-    MongoModule.register(
+    MongoModule.forFeature(
       { name: Country.name, schema: CountrySchema },
       { cache: true, cacheTags: ['country', 'state'] },
     ),

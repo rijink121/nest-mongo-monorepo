@@ -5,7 +5,7 @@ import { City, CitySchema } from './entities/city.entity';
 
 @Module({
   imports: [
-    MongoModule.register(
+    MongoModule.forFeature(
       { name: City.name, schema: CitySchema },
       { cache: true },
     ),

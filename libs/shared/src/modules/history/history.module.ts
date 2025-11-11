@@ -5,7 +5,7 @@ import { HistoryService } from './history.service';
 
 @Module({
   imports: [
-    MongoModule.register({ name: History.name, schema: HistorySchema }),
+    MongoModule.forFeature({ name: History.name, schema: HistorySchema }),
   ],
   providers: [HistoryService],
   exports: [HistoryService],

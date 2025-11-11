@@ -5,7 +5,7 @@ import { StateService } from './state.service';
 
 @Module({
   imports: [
-    MongoModule.register(
+    MongoModule.forFeature(
       { name: State.name, schema: StateSchema },
       { cache: true },
     ),

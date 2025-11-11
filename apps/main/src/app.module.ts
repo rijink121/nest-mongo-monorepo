@@ -18,7 +18,7 @@ import config from './config';
       load: [sharedConfig, config],
     }),
     CoreModule.register(appId),
-    MongoModule.root({ seeder: true }),
+    MongoModule.forRoot({ seeder: true }),
     SharedModule.register(appId),
   ],
   controllers: [AppController],

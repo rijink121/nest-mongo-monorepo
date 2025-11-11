@@ -4,7 +4,7 @@ import { Trash, TrashSchema } from './entities/trash.entity';
 import { TrashService } from './trash.service';
 
 @Module({
-  imports: [MongoModule.register({ name: Trash.name, schema: TrashSchema })],
+  imports: [MongoModule.forFeature({ name: Trash.name, schema: TrashSchema })],
   providers: [TrashService],
   exports: [TrashService],
 })
