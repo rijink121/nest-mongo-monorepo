@@ -65,6 +65,17 @@ export interface MongoJobOptions<M> extends QueryOptions<M> {
    * Other mongoose options
    */
   mongooseOptions?: Record<string, unknown>;
+
+  /**
+   * Get response even if record not found, by default false and it throws an error if record not found (update/delete)
+   * @default false
+   */
+  ignoreNotFound?: boolean;
+
+  /**
+   * Model document to be used in update operations
+   */
+  document?: ModelWrap<M> | null;
 }
 
 // MongoResponse interface extends JobResponse and defines the structure of the response data
