@@ -389,7 +389,7 @@ export class SqlService<M extends SqlSchema> {
         attributes,
         include,
         paranoid: !withDeleted,
-      } as any)  | null;
+      } as any);
 
       if (data === null && !ignoreNotFound) {
         throw new NotFoundError('Record not found');
@@ -623,7 +623,7 @@ export class SqlService<M extends SqlSchema> {
         attributes,
         include,
         paranoid: !withDeleted,
-      } as any)  | null;
+      } as any);
 
       if (data === null && !allowEmpty) {
         throw new NotFoundError('Record not found');
@@ -671,7 +671,7 @@ export class SqlService<M extends SqlSchema> {
         attributes,
         include,
         paranoid: !withDeleted,
-      } as any)  | null;
+      } as any);
 
       if (data === null && !allowEmpty) {
         throw new NotFoundError('Record not found');
@@ -795,7 +795,7 @@ export class SqlService<M extends SqlSchema> {
         attributes,
         include,
         paranoid: !withDeleted,
-      } as any)  | null;
+      } as any);
 
       let created = false;
 
@@ -892,7 +892,7 @@ export class SqlService<M extends SqlSchema> {
           [pk]: id,
         } as WhereOptions<Attributes<M>>,
         paranoid: hardDelete ? false : !withDeleted,
-      } as any)  | null;
+      } as any);
 
       if (data === null) {
         throw new NotFoundError('Record not found');
@@ -969,7 +969,7 @@ export class SqlService<M extends SqlSchema> {
       const data = await this.model.findOne({
         where,
         paranoid: hardDelete ? false : !withDeleted,
-      } as any)  | null;
+      } as any);
 
       if (data === null) {
         throw new NotFoundError('Record not found');
@@ -1115,7 +1115,7 @@ export class SqlService<M extends SqlSchema> {
       const data = await this.model.findOne({
         where: { ...where, [pk]: id } as WhereOptions<Attributes<M>>,
         paranoid: false,
-      } as any)  | null;
+      } as any);
 
       if (data === null) {
         throw new NotFoundError('Record not found');

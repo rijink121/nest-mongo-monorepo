@@ -1,9 +1,6 @@
 import { Job, JobResponse } from '@core/utils/job';
 import {
-  Attributes,
-  FindOptions,
   Includeable,
-  Model,
   Order,
   WhereOptions,
 } from 'sequelize';
@@ -12,11 +9,11 @@ import { SqlSchema } from './schema';
 /**
  * SQL Job Options interface defines options for SQL operations.
  */
-export interface SqlJobOptions<M> extends Omit<FindOptions<Attributes<M>>, 'where'> {
+export interface SqlJobOptions<M> {
   /**
    * Where conditions for filtering
    */
-  where?: WhereOptions<Attributes<M>>;
+  where?: WhereOptions<any>;
 
   /**
    * Enable pagination, default is false
@@ -86,7 +83,7 @@ export interface SqlJobOptions<M> extends Omit<FindOptions<Attributes<M>>, 'wher
   /**
    * Model instance to be used in update operations
    */
-  instance?: Model<M, M> | null;
+  instance?: any;
 }
 
 /**
@@ -116,7 +113,7 @@ export interface SqlGetOneResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: Model<M, M> | null;
+  data?: any;
 }
 
 /**
@@ -126,7 +123,7 @@ export interface SqlDeleteOneResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: Model<M, M>;
+  data?: any;
 }
 
 /**
@@ -136,7 +133,7 @@ export interface SqlGetAllResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: Model<M, M>[];
+  data?: any[];
 
   /**
    * Offset for pagination
@@ -171,7 +168,7 @@ export interface SqlUpdateResponse<M> extends SqlGetOneResponse<M> {
   /**
    * Previous data object
    */
-  previousData?: Partial<M>;
+  previousData?: any;
 }
 
 /**
@@ -181,7 +178,7 @@ export interface SqlDeleteResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: Model<M, M>;
+  data?: any;
 }
 
 /**
@@ -191,7 +188,7 @@ export interface SqlCreateBulkResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: Model<M, M>[];
+  data?: any[];
 }
 
 /**
@@ -211,14 +208,14 @@ export interface SqlJob<M extends SqlSchema, T = unknown> extends Job<T> {
   /**
    * body object used for create or update
    */
-  body?: Partial<Attributes<M>> & {
+  body?: Partial<any> & {
     [key: string]: unknown;
   };
 
   /**
    * array of records used for bulk create
    */
-  records?: Array<Partial<Attributes<M>> & { [key: string]: unknown }>;
+  records?: Array<Partial<any> & { [key: string]: unknown }>;
 
   /**
    * parameters for SQL operations

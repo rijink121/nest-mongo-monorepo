@@ -36,7 +36,7 @@ export interface RestoreOptions {
  *
  * This class should be extended by all SQL model schemas in the application.
  */
-export abstract class SqlSchema<T = any> extends Model<T> {
+export abstract class SqlSchema extends Model {
   @ApiProperty({
     description: 'ID',
     example: 1,
@@ -139,46 +139,9 @@ export abstract class SqlSchema<T = any> extends Model<T> {
   })
   /** ID of the user who soft deleted this record */
   declare deleted_by: number | string | null;
-
-  /**
-   * Soft deletes the record or force deletes if specified.
-   *
-   * @param options - Delete options including force flag and deletedBy user ID
-   * @returns Promise resolving to the deleted instance or null for hard delete
-   */
-  async delete(options: DeleteOptions = {}): Promise<this | null> {
-    if (options.force) {
-      await this.destroy({ force: true });
-      return null;
-    } else {
-      if (options.deletedBy) {
-        this.set('deleted_by', options.deletedBy);
-        this.set('updated_by', options.deletedBy);
-      }
-      await this.destroy();
-      return this;
-    }
-  }
-
-  /**
-   * Restores a soft deleted record.
-   *
-   * @param options - Restore options including restoredBy user ID
-   * @returns Promise resolving to the restored instance
-   */
-  async restore(options: RestoreOptions = {}): Promise<this> {
-    await super.restore();
-    this.set('deleted_at', null);
-    this.set('deleted_by', null);
-    if (options.restoredBy) {
-      this.set('updated_by', options.restoredBy);
-    }
-    await this.save();
-    return this;
-  }
 }
 
 /**
  * Type definition for SQL model instances.
  */
-export type SqlModelInstance<T> = SqlSchema<T> & T;
+export type SqlModelInstance<T> = SqlSchema & T;
