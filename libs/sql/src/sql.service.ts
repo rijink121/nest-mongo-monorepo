@@ -518,7 +518,7 @@ export class SqlService<M extends SqlSchema> {
       } = options;
 
       // Set limit based on configuration or provided value
-      let limit = options.limit || options.skip;
+      let limit = options.limit;
       if (!limit) {
         limit = this._config.get('paginationLimit');
       } else if (limit === -1) {
