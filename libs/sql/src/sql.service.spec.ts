@@ -1,3 +1,4 @@
+import { CachingService } from '@core/modules/caching/caching.service';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnectionToken } from '@nestjs/sequelize';
@@ -43,7 +44,7 @@ describe('SqlService', () => {
           useValue: mockSequelize,
         },
         {
-          provide: 'CachingService',
+          provide: CachingService,
           useValue: mockCachingService,
         },
         {
