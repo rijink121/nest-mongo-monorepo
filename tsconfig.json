@@ -34,6 +34,12 @@
       "@lib/mongo/*": [
         "libs/mongo/src/*"
       ],
+      "@lib/sql": [
+        "libs/sql/src"
+      ],
+      "@lib/sql/*": [
+        "libs/sql/src/*"
+      ],
       "@shared": [
         "libs/shared/src"
       ],
