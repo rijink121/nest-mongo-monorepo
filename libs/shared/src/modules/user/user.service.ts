@@ -1,5 +1,5 @@
 import { Job, JobResponse } from '@core/utils/job';
-import { ModelService, MongoService, SearchFields } from '@lib/mongo';
+import { ModelService, SearchFields, SqlService } from '@lib/sql';
 import { Injectable } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -13,7 +13,7 @@ export class UserService extends ModelService<User> {
    */
   searchFields: SearchFields<User> = ['name'];
 
-  constructor(db: MongoService<User>) {
+  constructor(db: SqlService<User>) {
     super(db);
   }
 
@@ -28,7 +28,7 @@ export class UserService extends ModelService<User> {
       const password = hashSync(payload!.password, 10);
       const { error } = await this.$db.updateRecord({
         owner,
-        id: owner!.id,
+        id: +owner!.id,
         body: { password },
       });
 

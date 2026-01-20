@@ -76,7 +76,7 @@ export class LocalAuthService {
       // Query user by email with password field included (normally excluded)
       const { error, data } = await this.userService.$db.findOneRecord({
         options: {
-          projection: '+password', // Include password field in query result
+          attributes: { include: ['password'] }, // Include password field in query result
           where: {
             email: username,
             role: this.appId === 'main' ? Role.Admin : Role.User,
@@ -137,7 +137,7 @@ export class LocalAuthService {
       const { data: tokenData, error: tokenError } =
         await this.sessionService.createToken<JwtPayload>({
           sessionId: data._id.toString(),
-          userId: owner.id,
+          userId: `${owner.id}`,
         });
       if (tokenError || !tokenData) {
         return { error: tokenError };

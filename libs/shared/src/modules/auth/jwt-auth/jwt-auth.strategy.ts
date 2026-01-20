@@ -105,7 +105,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
 
     // Retrieve user data from database with requested attributes and populations
     const { error, data } = await this.userService.$db.findRecordById({
-      id: payload.userId,
+      id: +payload.userId,
       options: {
         attributes: { include: includedAttributes }, // Include specific attributes from @Owner decorator
         include: includedPopulates, // Populate relationships from @OwnerPopulates decorator

@@ -1,11 +1,7 @@
-import {
-  createMongoSchema,
-  defaultSchemaOptions,
-  MongoSchema,
-} from '@lib/mongo/utils/schema';
-import { Prop, Schema } from '@nestjs/mongoose';
+import { SqlSchema } from '@lib/sql/utils/schema';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@shared/definitions/role.enum';
+import { hashSync } from 'bcrypt';
 import {
   IsBoolean,
   IsEmail,
@@ -15,18 +11,13 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { HydratedDocument } from 'mongoose';
+import { BeforeSave, Column, DataType, Table } from 'sequelize-typescript';
 
-export type UserDocument = HydratedDocument<User>;
-
-@Schema({
-  ...defaultSchemaOptions,
-})
-export class User extends MongoSchema {
-  @Prop({
-    type: String,
-    enum: Object.values(Role),
-    default: Role.User,
+@Table
+export class User extends SqlSchema {
+  @Column({
+    type: DataType.ENUM(...Object.values(Role)),
+    defaultValue: Role.User,
   })
   @ApiProperty({
     enum: Role,
@@ -34,66 +25,84 @@ export class User extends MongoSchema {
     example: Role.User,
   })
   @IsEnum(Role)
-  role: Role;
+  declare role: Role;
 
-  @Prop({ unique: true })
+  @Column({
+    type: DataType.STRING,
+    unique: true,
+  })
   @ApiProperty({
     description: 'Unique ID',
     example: 'a926d382-6741-4d95-86cf-1f5c421cf654',
     readOnly: true,
   })
-  uid: string;
+  declare uid: string;
 
-  @Prop()
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty({
     description: 'First Name',
     example: 'Ross',
   })
   @IsString()
-  first_name: string;
+  declare first_name: string;
 
-  @Prop()
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty({
     description: 'Last Name',
     example: 'Geller',
   })
   @IsString()
-  last_name: string;
+  declare last_name: string;
 
-  @Prop({ index: true })
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty({
     description: 'Full Name',
     example: 'Ross Geller',
     readOnly: true,
   })
-  name?: string;
+  declare name: string;
 
-  @Prop({ index: true })
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty({
     description: 'Email',
     example: 'ross.geller@gmail.com',
   })
   @IsString()
   @IsEmail()
-  email: string;
+  declare email: string;
 
-  @Prop({ type: String, default: '+1' })
+  @Column({
+    type: DataType.STRING,
+    defaultValue: '+1',
+  })
   @ApiProperty({
     description: 'Phone Code',
     example: '+91',
   })
   @IsString()
-  phone_code: string;
+  declare phone_code: string;
 
-  @Prop({ type: String })
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty({
     description: 'Phone',
     example: '9999999999',
   })
   @IsNumberString()
-  phone: string;
+  declare phone: string;
 
-  @Prop({ select: false })
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty({
     description: 'Password',
     example: '123456',
@@ -101,18 +110,23 @@ export class User extends MongoSchema {
   })
   @IsString()
   @MinLength(6)
-  password: string;
+  declare password: string;
 
-  @Prop()
+  @Column({
+    type: DataType.STRING,
+  })
   @ApiProperty({
     description: 'Avatar',
     example: 'user/avatar.png',
   })
   @IsOptional()
   @IsString()
-  avatar: string;
+  declare avatar: string;
 
-  @Prop({ default: false })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
   @ApiProperty({
     description: 'Enable 2FA?',
     example: false,
@@ -120,9 +134,12 @@ export class User extends MongoSchema {
   })
   @IsBoolean()
   @IsOptional()
-  enable_2fa?: boolean;
+  declare enable_2fa: boolean;
 
-  @Prop({ default: true })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
   @ApiProperty({
     description: 'Send Email?',
     example: true,
@@ -130,9 +147,12 @@ export class User extends MongoSchema {
   })
   @IsBoolean()
   @IsOptional()
-  send_email?: boolean;
+  declare send_email: boolean;
 
-  @Prop({ default: true })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
   @ApiProperty({
     description: 'Send SMS?',
     example: true,
@@ -140,9 +160,12 @@ export class User extends MongoSchema {
   })
   @IsBoolean()
   @IsOptional()
-  send_sms?: boolean;
+  declare send_sms: boolean;
 
-  @Prop({ default: true })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
   @ApiProperty({
     description: 'Send Push?',
     example: true,
@@ -150,15 +173,29 @@ export class User extends MongoSchema {
   })
   @IsBoolean()
   @IsOptional()
-  send_push?: boolean;
+  declare send_push: boolean;
 
-  @Prop()
+  @Column({
+    type: DataType.DATE,
+  })
   @ApiProperty({
     format: 'date-time',
     description: 'Last Login At',
     example: '2021-01-01T00:00:00Z',
     readOnly: true,
   })
-  last_login_at?: Date;
+  declare last_login_at: Date;
+
+  @BeforeSave
+  static hashPassword(instance: User) {
+    if (instance.changed('password')) {
+      instance.password = hashSync(instance.password, 10);
+    }
+  }
+
+  public toJSON() {
+    const result = { ...this.get({ plain: true }) };
+    delete result.password;
+    return result;
+  }
 }
-export const UserSchema = createMongoSchema(User);

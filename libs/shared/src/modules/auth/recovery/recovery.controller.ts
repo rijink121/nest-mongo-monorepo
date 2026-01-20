@@ -150,7 +150,7 @@ export class RecoveryController {
 
     if (verifyOtp.data.type === OtpSessionType.Login) {
       const { error, data } = await this.recoveryService.createUserSession(
-        verifyOtp.data.user_id,
+        `${verifyOtp.data.user_id}`,
         false,
         verifyOtp.data.payload,
       );

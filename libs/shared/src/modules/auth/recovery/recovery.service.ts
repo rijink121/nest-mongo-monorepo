@@ -48,7 +48,7 @@ export class RecoveryService {
   async forgotOtp(user: User): Promise<JobResponse<OtpSession>> {
     const { error, data } = await this.otpSessionService.create({
       body: {
-        user_id: user._id.toString(),
+        user_id: user.id,
         otp: otp(),
         type: OtpSessionType.Forgot,
         expire_at: new Date(Date.now() + 15 * 60 * 1000),
@@ -204,7 +204,7 @@ export class RecoveryService {
           body: {
             token: refreshToken,
             token_expiry: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
-            user_id: user._id.toString(),
+            user_id: `${user.id}`,
             info,
           },
         });

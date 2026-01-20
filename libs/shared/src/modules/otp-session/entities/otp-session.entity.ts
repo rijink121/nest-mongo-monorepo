@@ -19,9 +19,9 @@ export type OtpSessionDocument = HydratedDocument<OtpSession>;
   ...defaultSchemaOptions,
 })
 export class OtpSession extends MongoSchema {
-  @Prop({ type: 'Mixed' })
+  @Prop()
   @ApiProperty({ description: 'User ID', example: 1 })
-  user_id: string;
+  user_id: number;
 
   @Prop()
   @ApiProperty({ description: 'OTP', example: '123456' })

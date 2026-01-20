@@ -65,7 +65,7 @@ export abstract class SqlSchema extends Model {
     readOnly: true,
   })
   /** ID of the user who created this record */
-  declare created_by: number | string | null;
+  declare created_by: number;
 
   @UpdatedAt
   @Column({
@@ -92,7 +92,7 @@ export abstract class SqlSchema extends Model {
     readOnly: true,
   })
   /** ID of the user who last updated this record */
-  declare updated_by: number | string | null;
+  declare updated_by: number;
 
   @DeletedAt
   @Column({
@@ -120,7 +120,7 @@ export abstract class SqlSchema extends Model {
     readOnly: true,
   })
   /** ID of the user who soft deleted this record */
-  declare deleted_by: number | string | null;
+  declare deleted_by: number;
 }
 
 /**

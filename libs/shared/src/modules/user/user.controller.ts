@@ -10,6 +10,7 @@ import {
 import { Cache } from '@core/decorators/cache.decorator';
 import { OwnerIncludeAttribute } from '@core/decorators/owner-attributes.decorator';
 import { Owner } from '@core/decorators/owner.decorator';
+import { Public } from '@core/decorators/public.decorator';
 import {
   ApiQueryCountAll,
   ApiQueryCreate,
@@ -30,6 +31,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -56,6 +58,7 @@ const entity = snakeCase(User.name);
 @ApiErrorResponses()
 @ApiExtraModels(User)
 @Cache()
+@Public()
 @Controller(entity)
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -99,7 +102,7 @@ export class UserController {
   @ResponseUpdated(User)
   async update(
     @Owner() owner: OwnerDto,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
     @Query() query: ApiQueryUpdate,
     @I18n() i18n: I18nContext,
@@ -144,7 +147,7 @@ export class UserController {
     const { error, data } = await this.userService.update({
       owner,
       action: 'update',
-      id: owner.id,
+      id: +owner.id,
       body: { ...updateUserDto },
       payload: { ...query },
     });
@@ -312,7 +315,7 @@ export class UserController {
   @ResponseGetOne(User)
   async findById(
     @Owner() owner: OwnerDto,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Query() query: ApiQueryGetById,
     @I18n() i18n: I18nContext,
   ) {
@@ -347,7 +350,7 @@ export class UserController {
   @ResponseDeleted(User)
   async delete(
     @Owner() owner: OwnerDto,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Query() query: ApiQueryDelete,
     @I18n() i18n: I18nContext,
   ) {

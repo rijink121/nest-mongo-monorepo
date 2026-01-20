@@ -38,7 +38,7 @@ export class TokenAuthStrategy extends PassportStrategy(Strategy, 'authtoken') {
 
     const { error: userError, data: userData } =
       await this.userService.$db.findRecordById({
-        id: data.user_id,
+        id: +data.user_id,
         options: {
           allowEmpty: true,
         },
