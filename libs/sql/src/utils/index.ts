@@ -1,4 +1,5 @@
-import { IncludeOptions } from 'sequelize';
+import { isObject } from '@core/utils';
+import { IncludeOptions, Op } from 'sequelize';
 
 /**
  * Represents a node in the field projection tree structure.
@@ -6,9 +7,9 @@ import { IncludeOptions } from 'sequelize';
  */
 type AttributeNode = {
   /** The path/name of this node */
-  path: string;
+  association: string;
   /** Space-separated string of field names to select */
-  select: string[];
+  attributes: string[];
   /** Optional nested populate operations */
   include?: IncludeOptions[];
 };
@@ -78,8 +79,8 @@ export function parseFieldsProjection(fields: string[]): AttributeNode {
 
     // Create node with select fields
     const node: AttributeNode = {
-      path,
-      select: attributes,
+      association: path,
+      attributes,
     };
 
     // Process nested paths recursively
@@ -157,4 +158,43 @@ export function buildPopulateTree(fields: string[]): PopulateNode[] {
     }));
 
   return toPopulateNodes(root);
+}
+
+export const opAliases = {
+  $eq: Op.eq,
+  $ne: Op.ne,
+  $gte: Op.gte,
+  $gt: Op.gt,
+  $lte: Op.lte,
+  $lt: Op.lt,
+  $not: Op.not,
+  $in: Op.in,
+  $notIn: Op.notIn,
+  $is: Op.is,
+  $like: Op.like,
+  $notLike: Op.notLike,
+  $iLike: Op.iLike,
+  $notILike: Op.notILike,
+  $or: Op.or,
+};
+
+export function mapOperatorToQuery(
+  where: Record<string, unknown>,
+): Record<string, unknown> {
+  if (typeof where !== 'object') return where;
+  for (const key of Object.keys(where)) {
+    if (Object.prototype.hasOwnProperty.call(where, key)) {
+      const value = where[key];
+      if (Array.isArray(value)) {
+        where[key] = value.map((x) => mapOperatorToQuery(x));
+      } else if (isObject(value)) {
+        where[key] = mapOperatorToQuery(value);
+      }
+      if (Object.prototype.hasOwnProperty.call(opAliases, key)) {
+        where[opAliases[key]] = where[key];
+        delete where[key];
+      }
+    }
+  }
+  return where;
 }

@@ -7,7 +7,11 @@ import { BadRequestException } from '@nestjs/common';
 import { isObject } from 'class-validator';
 import { IncludeOptions, Op, Order, WhereOptions } from 'sequelize';
 import { ModelService, SearchField } from '../model.service';
-import { buildPopulateTree, parseFieldsProjection } from '../utils';
+import {
+  buildPopulateTree,
+  mapOperatorToQuery,
+  parseFieldsProjection,
+} from '../utils';
 import type { SqlJob } from '../utils/job';
 import type { SqlSchema } from '../utils/schema';
 
@@ -126,7 +130,9 @@ export const ReadPayload = <M extends SqlSchema>(
     // ============================================
     // 3. Process where conditions and search
     // ============================================
-    const where: WhereOptions<M> = (readPayload.where as WhereOptions<M>) ?? {};
+    const where: WhereOptions<M> = readPayload.where
+      ? (mapOperatorToQuery(readPayload.where) as WhereOptions<M>)
+      : {};
 
     // Process search functionality
     if (readPayload.search && this.searchFields) {
@@ -206,8 +212,8 @@ export const ReadPayload = <M extends SqlSchema>(
       include,
       order: readPayload.sort as Order,
       attributes:
-        attributesWithPopulate.select.length > 0
-          ? attributesWithPopulate.select
+        attributesWithPopulate.attributes.length > 0
+          ? attributesWithPopulate.attributes
           : undefined,
       offset: readPayload.offset,
       limit: readPayload.limit,
@@ -307,8 +313,8 @@ export const WritePayload = <M extends SqlSchema>(
     job.options = {
       include,
       attributes:
-        attributesWithPopulate.select.length > 0
-          ? attributesWithPopulate.select
+        attributesWithPopulate.attributes.length > 0
+          ? attributesWithPopulate.attributes
           : undefined,
       ...options, // Preserve any existing options
     };
