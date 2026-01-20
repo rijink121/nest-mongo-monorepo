@@ -45,7 +45,7 @@ export class SqlService<M extends SqlSchema> {
     private readonly cachingService: CachingService,
     private readonly _config: ConfigService,
   ) {
-    this.model = this.sequelize.model(modelName) as ModelStatic<M>;
+    this.model = this.sequelize.models[modelName] as ModelStatic<M>;
   }
 
   // =========================================================================
