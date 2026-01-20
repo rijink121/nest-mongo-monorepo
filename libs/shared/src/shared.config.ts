@@ -42,7 +42,7 @@ export const defaultEngine: AppEngine =
  * };
  * ```
  */
-export const sqlDialect: SqlDialect = SqlDialect.MySQL;
+export const sqlDialect: SqlDialect = SqlDialect.Postgres;
 
 /**
  * Current version of the application.

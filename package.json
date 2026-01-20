@@ -49,19 +49,20 @@
     "ioredis": "^5.8.1",
     "moment-timezone": "^0.6.0",
     "mongoose": "^8.18.1",
-    "mysql2": "^3.16.0",
     "nestjs-cls": "^6.0.1",
     "nestjs-i18n": "^10.5.1",
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pg": "^8.17.1",
+    "pg-hstore": "^2.3.4",
     "pluralize-esm": "^9.0.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
-    "uuid": "^13.0.0"
+    "uuid": "11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -123,5 +124,6 @@
       "^@lib/sql(|/.*)$": "<rootDir>/libs/sql/src/$1",
       "^@shared(|/.*)$": "<rootDir>/libs/shared/src/$1"
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
