@@ -1,15 +1,10 @@
-import { MongoModule } from '@lib/mongo/mongo.module';
+import { SqlModule } from '@lib/sql';
 import { Module } from '@nestjs/common';
 import { CityService } from './city.service';
-import { City, CitySchema } from './entities/city.entity';
+import { City } from './entities/city.entity';
 
 @Module({
-  imports: [
-    MongoModule.forFeature(
-      { name: City.name, schema: CitySchema },
-      { cache: true },
-    ),
-  ],
+  imports: [SqlModule.forFeature(City)],
   providers: [CityService],
   exports: [CityService],
 })

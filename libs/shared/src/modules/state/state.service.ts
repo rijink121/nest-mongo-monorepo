@@ -1,4 +1,4 @@
-import { ModelService, MongoService, SearchFields } from '@lib/mongo';
+import { ModelService, SearchFields, SqlService } from '@lib/sql';
 import { Injectable } from '@nestjs/common';
 import { State } from './entities/state.entity';
 
@@ -10,7 +10,7 @@ export class StateService extends ModelService<State> {
    */
   searchFields: SearchFields<State> = ['name', 'code'];
 
-  constructor(db: MongoService<State>) {
+  constructor(db: SqlService<State>) {
     super(db);
   }
 }

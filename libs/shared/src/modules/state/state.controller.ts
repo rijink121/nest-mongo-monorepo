@@ -29,6 +29,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -96,7 +97,7 @@ export class StateController {
   @ResponseUpdated(State)
   async update(
     @Owner() owner: OwnerDto,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateStateDto: UpdateStateDto,
     @Query() query: ApiQueryUpdate,
     @I18n() i18n: I18nContext,
@@ -228,7 +229,7 @@ export class StateController {
   @ResponseGetOne(State)
   async findById(
     @Owner() owner: OwnerDto,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Query() query: ApiQueryGetById,
     @I18n() i18n: I18nContext,
   ) {
@@ -263,7 +264,7 @@ export class StateController {
   @ResponseDeleted(State)
   async delete(
     @Owner() owner: OwnerDto,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Query() query: ApiQueryDelete,
     @I18n() i18n: I18nContext,
   ) {

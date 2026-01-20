@@ -1,53 +1,36 @@
-import { MongoBelongsTo } from '@lib/mongo/decorators/populate';
-import {
-  createMongoSchema,
-  defaultSchemaOptions,
-  MongoSchema,
-} from '@lib/mongo/utils/schema';
-import { Prop, Schema } from '@nestjs/mongoose';
+import { SqlSchema } from '@lib/sql/utils/schema';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsOptional, IsString } from 'class-validator';
-import { HydratedDocument, Types } from 'mongoose';
+import { IsNumber, IsString } from 'class-validator';
+import { BelongsTo, Column, ForeignKey, Table } from 'sequelize-typescript';
 import { State } from '../../state/entities/state.entity';
 
-export type CityDocument = HydratedDocument<City>;
-
-@Schema({
-  ...defaultSchemaOptions,
-})
-export class City extends MongoSchema {
-  @Prop()
+@Table
+export class City extends SqlSchema {
+  @Column
   @ApiProperty({
     description: 'City Name',
     example: 'Los Angeles',
   })
   @IsString()
-  name: string;
+  declare name: string;
 
-  @Prop()
+  @Column
   @ApiProperty({
     description: 'City Code',
     example: 'LA',
   })
   @IsString()
-  code: string;
+  declare code: string;
 
-  @Prop({ type: Types.ObjectId, ref: State.name })
+  @ForeignKey(() => State)
+  @Column
   @ApiProperty({
     description: 'State ID',
-    example: '507f1f77bcf86cd799439011',
-    type: String,
+    example: 1,
   })
-  @IsOptional()
-  @IsMongoId()
-  state_id?: Types.ObjectId;
+  @IsNumber()
+  declare state_id: number;
 
-  @MongoBelongsTo(State.name, 'state_id')
-  @ApiProperty({
-    description: 'State relation',
-    type: () => State,
-    required: false,
-  })
-  state?: State;
+  @BelongsTo(() => State)
+  declare state: State;
 }
-export const CitySchema = createMongoSchema(City);
