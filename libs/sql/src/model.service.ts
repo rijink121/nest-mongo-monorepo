@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { DeletePayload, ReadPayload, WritePayload } from './decorators/payload';
 import { SqlService } from './sql.service';
 import type { SqlJob } from './utils/job';
 import {
@@ -187,6 +188,7 @@ export class ModelService<M extends SqlSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async findAll(job: SqlJob<M>): Promise<SqlGetAllResponse<M>> {
     try {
       await this.doBeforeRead(job);
@@ -206,6 +208,7 @@ export class ModelService<M extends SqlSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async getCount(job: SqlJob<M>): Promise<SqlCountResponse> {
     try {
       await this.doBeforeRead(job);
@@ -225,6 +228,7 @@ export class ModelService<M extends SqlSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async findById(job: SqlJob<M>): Promise<SqlGetOneResponse<M>> {
     try {
       await this.doBeforeRead(job);
@@ -244,6 +248,7 @@ export class ModelService<M extends SqlSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @ReadPayload
   async findOne(job: SqlJob<M>): Promise<SqlGetOneResponse<M>> {
     try {
       await this.doBeforeRead(job);
@@ -263,6 +268,7 @@ export class ModelService<M extends SqlSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @WritePayload
   async create(job: SqlJob<M>): Promise<SqlCreateResponse<M>> {
     try {
       await this.doBeforeWrite(job);
@@ -283,6 +289,7 @@ export class ModelService<M extends SqlSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @WritePayload
   async update(job: SqlJob<M>): Promise<SqlUpdateResponse<M>> {
     try {
       await this.doBeforeWrite(job);
@@ -303,6 +310,7 @@ export class ModelService<M extends SqlSchema> {
    * @param {object} job - mandatory - a job object representing the job information
    * @return {object} job response object
    */
+  @DeletePayload
   async delete(job: SqlJob<M>): Promise<SqlDeleteResponse<M>> {
     try {
       await this.doBeforeDelete(job);

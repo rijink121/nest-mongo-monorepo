@@ -27,7 +27,7 @@ export type SqlJobOptions<M> = FindOptions<M> &
     /**
      * Where conditions for filtering
      */
-    where?: WhereOptions<any>;
+    where?: WhereOptions<M>;
 
     /**
      * Enable pagination, default is false

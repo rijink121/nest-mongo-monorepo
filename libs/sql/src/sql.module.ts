@@ -1,4 +1,5 @@
 import { CachingModule } from '@core/modules/caching/caching.module';
+import { DatabaseModule as MongoDatabaseModule } from '@lib/mongo/modules/database/database.module';
 import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import type { ModelCtor } from 'sequelize-typescript';
@@ -68,7 +69,11 @@ export class SqlModule {
   static forFeature(model: ModelCtor, options?: SqlModelOption): DynamicModule {
     return {
       module: DatabaseModule,
-      imports: [SequelizeModule.forFeature([model]), CachingModule],
+      imports: [
+        SequelizeModule.forFeature([model]),
+        MongoDatabaseModule,
+        CachingModule,
+      ],
       providers: [
         {
           provide: 'MODEL_NAME',

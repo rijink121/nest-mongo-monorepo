@@ -3,17 +3,12 @@ import { addDays, snakeCase } from '@core/utils';
 import { NotFoundError } from '@core/utils/error';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectConnection } from '@nestjs/sequelize';
+import { InjectConnection } from '@nestjs/mongoose';
 import { History } from '@shared/modules/history/entities/history.entity';
 import { Trash } from '@shared/modules/trash/entities/trash.entity';
 import { Connection } from 'mongoose';
-import {
-  Attributes,
-  ModelStatic,
-  ScopeOptions,
-  Sequelize,
-  WhereOptions,
-} from 'sequelize';
+import { Attributes, ModelStatic, ScopeOptions, WhereOptions } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import type { SqlModelOption } from './sql.module';
 import {
   Scope,
@@ -45,7 +40,7 @@ export class SqlService<M extends SqlSchema> {
   constructor(
     @Inject('MODEL_NAME') private readonly modelName: string,
     @Inject('MODEL_OPTIONS') private readonly options: SqlModelOption,
-    @InjectConnection() private readonly sequelize: Sequelize,
+    private readonly sequelize: Sequelize,
     @InjectConnection() private readonly connection: Connection,
     private readonly cachingService: CachingService,
     private readonly _config: ConfigService,
