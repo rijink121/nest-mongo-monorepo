@@ -4,6 +4,7 @@ import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import type { ModelCtor } from 'sequelize-typescript';
 import { DatabaseModule } from './modules/database/database.module';
+import { SeederModule } from './modules/seeder';
 import { SqlService } from './sql.service';
 
 /**
@@ -41,14 +42,13 @@ export class SqlModule {
    * @param options - Root module configuration options
    * @returns Configured dynamic module
    */
-  static forRoot(/* options?: SqlModuleOption */): DynamicModule {
+  static forRoot(options?: SqlModuleOption): DynamicModule {
     const imports: ModuleMetadata['imports'] = [];
     imports.push(DatabaseModule);
 
-    // TODO: Include the seeder module if enabled (when implemented)
-    // if (options?.seeder) {
-    //   imports.push(SeederModule);
-    // }
+    if (options?.seeder) {
+      imports.push(SeederModule);
+    }
 
     return {
       module: SqlModule,

@@ -1,4 +1,4 @@
-import { Seed, SeedReference } from '@lib/mongo/modules/seeder';
+import { Seed, SeedReference } from '@lib/sql/modules/seeder';
 import { City } from '@shared/modules/city/entities/city.entity';
 
 const seed: Seed<Omit<City, 'state_id'> & { state_id: SeedReference }> = {

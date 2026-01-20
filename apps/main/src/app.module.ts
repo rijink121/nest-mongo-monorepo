@@ -20,7 +20,7 @@ import config from './config';
     }),
     CoreModule.register(appId),
     MongoModule.forRoot({ seeder: true }),
-    SqlModule.forRoot(),
+    SqlModule.forRoot({ seeder: true }),
     SharedModule.register(appId),
   ],
   controllers: [AppController],

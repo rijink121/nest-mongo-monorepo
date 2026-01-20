@@ -1,4 +1,4 @@
-import { Seed } from '@lib/mongo/modules/seeder';
+import { Seed } from '@lib/sql/modules/seeder';
 import { Role } from '@shared/definitions/role.enum';
 import { User } from '@shared/modules/user/entities/user.entity';
 

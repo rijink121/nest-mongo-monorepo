@@ -1,4 +1,4 @@
-import { Seed } from '@lib/mongo/modules/seeder';
+import { Seed } from '@lib/sql/modules/seeder';
 import { Country } from '@shared/modules/country/entities/country.entity';
 
 const seed: Seed<Country> = {
