@@ -1,7 +1,11 @@
 import { TrimPipe } from '@core/pipes/trim.pipe';
 import { isPrimaryInstance } from '@core/utils';
 import { env } from '@core/utils/env';
-import { appFilter, getSwaggerConfig } from '@core/utils/swagger';
+import {
+  appFilter,
+  getSwaggerConfig,
+  getSwaggerUIOptions,
+} from '@core/utils/swagger';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -46,7 +50,12 @@ async function bootstrap() {
       app,
       getSwaggerConfig(appName, appVersion),
     );
-    SwaggerModule.setup('/docs', app, appFilter(document, appId));
+    SwaggerModule.setup(
+      '/docs',
+      app,
+      appFilter(document, appId),
+      getSwaggerUIOptions(),
+    );
   }
 
   // Body parsers for incoming requests
