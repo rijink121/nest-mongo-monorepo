@@ -1,90 +1,67 @@
 import { Job, JobResponse } from '@core/utils/job';
 import {
-  Includeable,
-  Order,
+  BulkCreateOptions,
+  CountOptions,
+  CreateOptions,
+  CreationAttributes,
+  DestroyOptions,
+  FindAndCountOptions,
+  FindOptions,
+  FindOrBuildOptions,
   WhereOptions,
 } from 'sequelize';
 import { SqlSchema } from './schema';
 
+export type Scope = (string | [string, ...unknown[]])[];
+
 /**
  * SQL Job Options interface defines options for SQL operations.
  */
-export interface SqlJobOptions<M> {
-  /**
-   * Where conditions for filtering
-   */
-  where?: WhereOptions<any>;
+export type SqlJobOptions<M> = FindOptions<M> &
+  CreateOptions<M> &
+  BulkCreateOptions<M> &
+  FindAndCountOptions<M> &
+  CountOptions<M> &
+  DestroyOptions<M> &
+  FindOrBuildOptions & {
+    /**
+     * Where conditions for filtering
+     */
+    where?: WhereOptions<any>;
 
-  /**
-   * Enable pagination, default is false
-   * @default false
-   */
-  pagination?: boolean;
+    /**
+     * Enable pagination, default is false
+     * @default false
+     */
+    pagination?: boolean;
 
-  /**
-   * Get response even if record not found, by default false and it throws an error if record not found
-   * @default false
-   */
-  allowEmpty?: boolean;
+    /**
+     * Get response even if record not found, by default false and it throws an error if record not found
+     * @default false
+     */
+    allowEmpty?: boolean;
 
-  /**
-   * Retrieve records including deleted records, default is false (uses paranoid: false)
-   * @default false
-   */
-  withDeleted?: boolean;
+    /**
+     * Get response even if record not found, by default false and it throws an error if record not found (update/delete)
+     * @default false
+     */
+    ignoreNotFound?: boolean;
 
-  /**
-   * Hard delete record, default is false (soft delete)
-   * @default false
-   */
-  hardDelete?: boolean;
-
-  /**
-   * Include associations/relations
-   */
-  include?: Includeable | Includeable[];
-
-  /**
-   * Attributes to select
-   */
-  attributes?: string[] | { exclude?: string[]; include?: string[] };
-
-  /**
-   * Ordering criteria
-   */
-  order?: Order;
-
-  /**
-   * Limit for query
-   */
-  limit?: number;
-
-  /**
-   * Offset for pagination
-   */
-  offset?: number;
-
-  /**
-   * Skip value (alias for offset)
-   */
-  skip?: number;
-
-  /**
-   * Projection fields (alias for attributes)
-   */
-  projection?: string[] | { exclude?: string[]; include?: string[] };
-
-  /**
-   * Get response even if record not found, by default false and it throws an error if record not found (update/delete)
-   * @default false
-   */
-  ignoreNotFound?: boolean;
-
-  /**
-   * Model instance to be used in update operations
-   */
-  instance?: any;
-}
+    /**
+     * Scope to apply on the model
+     * @default []
+     */
+    scope?: Scope;
+    /**
+     * Ignore all scopes including default scope
+     * @default false
+     */
+    unscoped?: boolean;
+    /**
+     * Other sequelize options
+     */
+    sequelizeOptions?: any;
+  };
 
 /**
  * SQL Response interface extends JobResponse and defines the structure of the response data.
@@ -113,7 +90,7 @@ export interface SqlGetOneResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: any;
+  data?: M | null;
 }
 
 /**
@@ -123,7 +100,7 @@ export interface SqlDeleteOneResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: any;
+  data?: M;
 }
 
 /**
@@ -133,7 +110,7 @@ export interface SqlGetAllResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: any[];
+  data?: M[];
 
   /**
    * Offset for pagination
@@ -168,7 +145,7 @@ export interface SqlUpdateResponse<M> extends SqlGetOneResponse<M> {
   /**
    * Previous data object
    */
-  previousData?: any;
+  previousData?: M;
 }
 
 /**
@@ -178,7 +155,7 @@ export interface SqlDeleteResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: any;
+  data?: M;
 }
 
 /**
@@ -188,7 +165,7 @@ export interface SqlCreateBulkResponse<M> extends JobResponse {
   /**
    * Response data
    */
-  data?: any[];
+  data?: M[];
 }
 
 /**
@@ -203,19 +180,17 @@ export interface SqlJob<M extends SqlSchema, T = unknown> extends Job<T> {
   /**
    * primary key value of the model
    */
-  id?: number | string;
+  id?: number;
 
   /**
    * body object used for create or update
    */
-  body?: Partial<any> & {
-    [key: string]: unknown;
-  };
+  body?: CreationAttributes<M> & { [key: string]: unknown };
 
   /**
    * array of records used for bulk create
    */
-  records?: Array<Partial<any> & { [key: string]: unknown }>;
+  records?: Array<CreationAttributes<M> & { [key: string]: unknown }>;
 
   /**
    * parameters for SQL operations

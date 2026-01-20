@@ -52,7 +52,7 @@ export default registerAs('sql', (): SequelizeModuleOptions => {
     DATABASE_PORT: parseInt(env.get('DATABASE_PORT', '3306'), 10),
     DATABASE_USERNAME: env.get('DATABASE_USERNAME', 'root'),
     DATABASE_PASSWORD: env.get('DATABASE_PASSWORD', ''),
-    DATABASE_NAME: env.get('DATABASE_NAME', 'nest'),
+    DATABASE_NAME: env.get('DATABASE_NAME'),
     DATABASE_ALTER_SYNC: env.get('DATABASE_ALTER_SYNC', 'N'),
     DATABASE_DISABLE_SSL: env.get('DATABASE_DISABLE_SSL', 'N'),
     DATABASE_LOGGING: env.get('DATABASE_LOGGING', 'N'),

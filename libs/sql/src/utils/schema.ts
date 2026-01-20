@@ -9,24 +9,6 @@ import {
 } from 'sequelize-typescript';
 
 /**
- * Options for delete operations in SQL.
- */
-export interface DeleteOptions {
-  /** Force permanent deletion (hard delete) */
-  force?: boolean;
-  /** ID of the user who performed the deletion */
-  deletedBy?: number | string;
-}
-
-/**
- * Options for restore operations in SQL.
- */
-export interface RestoreOptions {
-  /** ID of the user who performed the restoration */
-  restoredBy?: number | string;
-}
-
-/**
  * Base schema class for SQL models using Sequelize.
  * Provides common fields and functionality for all models including:
  * - Unique identifiers

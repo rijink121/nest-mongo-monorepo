@@ -40,7 +40,7 @@ export class SqlModule {
    * @param options - Root module configuration options
    * @returns Configured dynamic module
    */
-  static forRoot(options?: SqlModuleOption): DynamicModule {
+  static forRoot(/* options?: SqlModuleOption */): DynamicModule {
     const imports: ModuleMetadata['imports'] = [];
     imports.push(DatabaseModule);
 
@@ -65,10 +65,7 @@ export class SqlModule {
    * @param options - Per-model configuration options
    * @returns Configured dynamic module with SqlService
    */
-  static forFeature(
-    model: ModelCtor,
-    options?: SqlModelOption,
-  ): DynamicModule {
+  static forFeature(model: ModelCtor, options?: SqlModelOption): DynamicModule {
     return {
       module: DatabaseModule,
       imports: [SequelizeModule.forFeature([model]), CachingModule],

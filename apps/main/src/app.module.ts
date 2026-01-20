@@ -1,5 +1,6 @@
 import { CoreModule } from '@core';
 import { MongoModule } from '@lib/mongo';
+import { SqlModule } from '@lib/sql';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from '@shared';
@@ -19,6 +20,7 @@ import config from './config';
     }),
     CoreModule.register(appId),
     MongoModule.forRoot({ seeder: true }),
+    SqlModule.forRoot(),
     SharedModule.register(appId),
   ],
   controllers: [AppController],
