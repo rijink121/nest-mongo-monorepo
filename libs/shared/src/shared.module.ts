@@ -5,6 +5,7 @@ import { JwtAuthModule } from './modules/auth/jwt-auth/jwt-auth.module';
 import { LocalAuthModule } from './modules/auth/local-auth/local-auth.module';
 import { RecoveryModule } from './modules/auth/recovery/recovery.module';
 import { TokenAuthModule } from './modules/auth/token-auth/token-auth.module';
+import { BookModule } from './modules/book/book.module';
 import { CityRouteModule } from './modules/city/city-route.module';
 import { CountryRouteModule } from './modules/country/country-route.module';
 import { HistoryModule } from './modules/history/history.module';
@@ -36,6 +37,7 @@ export class SharedModule {
           StateRouteModule,
           CityRouteModule,
           SessionModule,
+          BookModule,
         );
         break;
       case 'app-api':
