@@ -112,9 +112,9 @@ export class SeederService {
     for (const key in item) {
       if (Object.prototype.hasOwnProperty.call(item, key)) {
         const value = item[key];
+
         // Check if the value is a reference to another document
         if (value instanceof SeedReference) {
-          console.log('here1', value);
           try {
             // Find the parent document in the referenced collection
             const parent = await this.connection.models[value.model].findOne({
