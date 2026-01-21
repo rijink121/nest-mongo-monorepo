@@ -1,3 +1,5 @@
+import { OWNER_INCLUDE_ATTRIBUTES_KEY } from '@core/decorators/owner-attributes.decorator';
+import { OWNER_INCLUDE_POPULATES_KEY } from '@core/decorators/owner-populates.decorator';
 import { IS_PUBLIC_KEY } from '@core/decorators/public.decorator';
 import { OwnerDto } from '@core/types/owner';
 import {
@@ -22,6 +24,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (isPublic) {
       return true;
     }
+    const request = context.switchToHttp().getRequest();
+    request[OWNER_INCLUDE_ATTRIBUTES_KEY] = this.reflector.getAllAndOverride<
+      string[]
+    >(OWNER_INCLUDE_ATTRIBUTES_KEY, [context.getHandler(), context.getClass()]);
+    request[OWNER_INCLUDE_POPULATES_KEY] = this.reflector.getAllAndOverride<
+      string[]
+    >(OWNER_INCLUDE_POPULATES_KEY, [context.getHandler(), context.getClass()]);
     return super.canActivate(context);
   }
 

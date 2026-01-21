@@ -10,7 +10,7 @@ import {
 import { Cache } from '@core/decorators/cache.decorator';
 import { OwnerIncludeAttribute } from '@core/decorators/owner-attributes.decorator';
 import { Owner } from '@core/decorators/owner.decorator';
-import { Public } from '@core/decorators/public.decorator';
+import { Roles } from '@core/decorators/roles.decorator';
 import {
   ApiQueryCountAll,
   ApiQueryCreate,
@@ -32,8 +32,8 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -43,6 +43,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role } from '@shared/definitions/role.enum';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -58,7 +59,6 @@ const entity = snakeCase(User.name);
 @ApiErrorResponses()
 @ApiExtraModels(User)
 @Cache()
-@Public()
 @Controller(entity)
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -69,6 +69,7 @@ export class UserController {
   @Post()
   @ApiOperation({ summary: `Create new ${entity}` })
   @ResponseCreated(User)
+  @Roles(Role.SuperAdmin)
   async create(
     @Owner() owner: OwnerDto,
     @Body() createUserDto: CreateUserDto,
@@ -95,47 +96,9 @@ export class UserController {
   }
 
   /**
-   * Update an entity document by using id
-   */
-  @Put(':id')
-  @ApiOperation({ summary: `Update ${entity} using id` })
-  @ResponseUpdated(User)
-  async update(
-    @Owner() owner: OwnerDto,
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-    @Query() query: ApiQueryUpdate,
-    @I18n() i18n: I18nContext,
-  ) {
-    const { error, data } = await this.userService.update({
-      owner,
-      action: 'update',
-      id,
-      body: { ...updateUserDto },
-      payload: { ...query },
-    });
-
-    if (error) {
-      if (error instanceof NotFoundError) {
-        throw new NotFoundException(
-          i18n.t('crud.notFound', { args: { entity } }),
-        );
-      }
-      throw new InternalServerErrorException(
-        error instanceof Error ? error.message : error,
-      );
-    }
-
-    return {
-      data: { [entity]: data },
-      message: i18n.t('crud.updated', { args: { entity } }),
-    };
-  }
-
-  /**
    * Update logged in user details
    */
-  @Put('me')
+  @Patch('me')
   @ApiOperation({ summary: 'Update logged in user details' })
   @ResponseUpdated(User)
   async updateMe(
@@ -172,7 +135,7 @@ export class UserController {
   /**
    * Change password for logged in user
    */
-  @Put('password')
+  @Patch('password')
   @ApiOperation({ summary: 'Change password for logged in user' })
   @ApiOkResponse({
     description: 'Success',
@@ -210,6 +173,45 @@ export class UserController {
 
     return {
       message: i18n.t('crud.passwordChanged', { args: { entity } }),
+    };
+  }
+
+  /**
+   * Update an entity document by using id
+   */
+  @Patch(':id')
+  @ApiOperation({ summary: `Update ${entity} using id` })
+  @ResponseUpdated(User)
+  @Roles(Role.SuperAdmin)
+  async update(
+    @Owner() owner: OwnerDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+    @Query() query: ApiQueryUpdate,
+    @I18n() i18n: I18nContext,
+  ) {
+    const { error, data } = await this.userService.update({
+      owner,
+      action: 'update',
+      id,
+      body: { ...updateUserDto },
+      payload: { ...query },
+    });
+
+    if (error) {
+      if (error instanceof NotFoundError) {
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
+      }
+      throw new InternalServerErrorException(
+        error instanceof Error ? error.message : error,
+      );
+    }
+
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.updated', { args: { entity } }),
     };
   }
 
@@ -308,6 +310,40 @@ export class UserController {
   }
 
   /**
+   * Get logged in user details
+   */
+  @Get('me')
+  @ApiOperation({ summary: `Get logged in user details` })
+  @ResponseGetOne(User)
+  async me(
+    @Owner() owner: OwnerDto,
+    @Query() query: ApiQueryGetById,
+    @I18n() i18n: I18nContext,
+  ) {
+    const { error, data } = await this.userService.findById({
+      owner,
+      action: 'findById',
+      id: +owner.id,
+      payload: { ...query },
+    });
+
+    if (error) {
+      if (error instanceof NotFoundError) {
+        throw new NotFoundException(
+          i18n.t('crud.notFound', { args: { entity } }),
+        );
+      }
+      throw new InternalServerErrorException(
+        error instanceof Error ? error.message : error,
+      );
+    }
+    return {
+      data: { [entity]: data },
+      message: i18n.t('crud.retrieve', { args: { entity } }),
+    };
+  }
+
+  /**
    * Get an entity document by using id
    */
   @Get(':id')
@@ -348,6 +384,7 @@ export class UserController {
   @Delete(':id')
   @ApiOperation({ summary: `Delete ${entity} using id` })
   @ResponseDeleted(User)
+  @Roles(Role.SuperAdmin)
   async delete(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,

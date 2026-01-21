@@ -127,7 +127,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
 
     if (includedAttributes?.length > 0) {
       for (const attr of includedAttributes) {
-        includedAttributeValues[attr] = data[attr];
+        includedAttributeValues[attr] = data.getDataValue(attr);
       }
     }
 

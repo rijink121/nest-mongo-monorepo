@@ -9,6 +9,7 @@ import {
 } from '@core/decorators/api.decorator';
 import { Cache } from '@core/decorators/cache.decorator';
 import { Owner } from '@core/decorators/owner.decorator';
+import { Roles } from '@core/decorators/roles.decorator';
 import {
   ApiQueryCountAll,
   ApiQueryCreate,
@@ -30,8 +31,8 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -40,6 +41,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role } from '@shared/definitions/role.enum';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { CreateStateDto } from './dto/create-state.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
@@ -64,6 +66,7 @@ export class StateController {
   @Post()
   @ApiOperation({ summary: `Create new ${entity}` })
   @ResponseCreated(State)
+  @Roles(Role.SuperAdmin)
   async create(
     @Owner() owner: OwnerDto,
     @Body() createStateDto: CreateStateDto,
@@ -92,9 +95,10 @@ export class StateController {
   /**
    * Update an entity document by using id
    */
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: `Update ${entity} using id` })
   @ResponseUpdated(State)
+  @Roles(Role.SuperAdmin)
   async update(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,
@@ -262,6 +266,7 @@ export class StateController {
   @Delete(':id')
   @ApiOperation({ summary: `Delete ${entity} using id` })
   @ResponseDeleted(State)
+  @Roles(Role.SuperAdmin)
   async delete(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,

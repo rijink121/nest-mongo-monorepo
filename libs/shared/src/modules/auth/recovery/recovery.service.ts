@@ -11,7 +11,6 @@ import { OtpSessionService } from '@shared/modules/otp-session/otp-session.servi
 import { SessionService } from '@shared/modules/session/session.service';
 import { User } from '@shared/modules/user/entities/user.entity';
 import { UserService } from '@shared/modules/user/user.service';
-import { hashSync } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import moment from 'moment';
 import { JwtPayload } from '../jwt-auth/jwt-auth.strategy';
@@ -165,7 +164,7 @@ export class RecoveryService {
     }
     const userUpdate = await this.userService.$db.updateRecord({
       id: otpSession.data.user_id,
-      body: { password: hashSync(body.password, 10) },
+      body: { password: body.password },
     });
     if (userUpdate.error) {
       return { error: 'Unable to change password, Please try again' };

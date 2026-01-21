@@ -1,3 +1,4 @@
+import { RolesGuard } from '@core/guards/roles.guard';
 import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/jwt-auth/jwt-auth.guard';
@@ -20,6 +21,10 @@ export class SharedModule {
         {
           provide: APP_GUARD,
           useClass: JwtAuthGuard,
+        },
+        {
+          provide: APP_GUARD,
+          useClass: RolesGuard,
         },
       ],
       exports: [SharedService],

@@ -9,6 +9,7 @@ import {
 } from '@core/decorators/api.decorator';
 import { Cache } from '@core/decorators/cache.decorator';
 import { Owner } from '@core/decorators/owner.decorator';
+import { Roles } from '@core/decorators/roles.decorator';
 import {
   ApiQueryCountAll,
   ApiQueryCreate,
@@ -30,8 +31,8 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -40,6 +41,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role } from '@shared/definitions/role.enum';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { CountryService } from './country.service';
 import { CreateCountryDto } from './dto/create-country.dto';
@@ -64,6 +66,7 @@ export class CountryController {
   @Post()
   @ApiOperation({ summary: `Create new ${entity}` })
   @ResponseCreated(Country)
+  @Roles(Role.SuperAdmin)
   async create(
     @Owner() owner: OwnerDto,
     @Body() createCountryDto: CreateCountryDto,
@@ -92,9 +95,10 @@ export class CountryController {
   /**
    * Update an entity document by using id
    */
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: `Update ${entity} using id` })
   @ResponseUpdated(Country)
+  @Roles(Role.SuperAdmin)
   async update(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,
@@ -262,6 +266,7 @@ export class CountryController {
   @Delete(':id')
   @ApiOperation({ summary: `Delete ${entity} using id` })
   @ResponseDeleted(Country)
+  @Roles(Role.SuperAdmin)
   async delete(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,

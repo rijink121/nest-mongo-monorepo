@@ -9,7 +9,7 @@ import {
 } from '@core/decorators/api.decorator';
 import { Cache } from '@core/decorators/cache.decorator';
 import { Owner } from '@core/decorators/owner.decorator';
-import { Public } from '@core/decorators/public.decorator';
+import { Roles } from '@core/decorators/roles.decorator';
 import {
   ApiQueryCountAll,
   ApiQueryCreate,
@@ -31,8 +31,8 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -41,6 +41,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role as RoleEnum } from '@shared/definitions/role.enum';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -56,7 +57,7 @@ const entity = snakeCase(Role.name);
 @ApiExtraModels(Role)
 @Cache()
 @Controller(entity)
-@Public()
+@Roles(RoleEnum.SuperAdmin)
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
@@ -94,7 +95,7 @@ export class RoleController {
   /**
    * Update an entity document by using id
    */
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: `Update ${entity} using id` })
   @ResponseUpdated(Role)
   async update(

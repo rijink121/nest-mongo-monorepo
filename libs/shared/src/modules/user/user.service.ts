@@ -1,7 +1,7 @@
 import { Job, JobResponse } from '@core/utils/job';
 import { ModelService, SearchFields, SqlService } from '@lib/sql';
 import { Injectable } from '@nestjs/common';
-import { compareSync, hashSync } from 'bcrypt';
+import { compareSync } from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { User } from './entities/user.entity';
 
@@ -25,11 +25,10 @@ export class UserService extends ModelService<User> {
       return { error: 'Invalid old password' };
     }
     try {
-      const password = hashSync(payload!.password, 10);
       const { error } = await this.$db.updateRecord({
         owner,
         id: +owner!.id,
-        body: { password },
+        body: { password: payload!.password },
       });
 
       if (error) return { error };

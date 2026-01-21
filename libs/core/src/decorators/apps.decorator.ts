@@ -1,4 +1,4 @@
-import { AppsGuard } from '@core/guards/apps';
+import { AppsGuard } from '@core/guards/apps.guard';
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiExtension } from '@nestjs/swagger';
 
