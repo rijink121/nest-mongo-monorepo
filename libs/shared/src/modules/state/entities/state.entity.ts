@@ -1,10 +1,21 @@
 import { SqlSchema } from '@lib/sql/utils/schema';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
-import { BelongsTo, Column, ForeignKey, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  ForeignKey,
+  Scopes,
+  Table,
+} from 'sequelize-typescript';
 import { Country } from '../../country/entities/country.entity';
 
 @Table
+@Scopes(() => ({
+  withCountry: () => ({
+    include: ['country'],
+  }),
+}))
 export class State extends SqlSchema {
   @Column
   @ApiProperty({

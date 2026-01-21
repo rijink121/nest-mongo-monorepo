@@ -8,7 +8,13 @@ export class StateService extends ModelService<State> {
    * searchFields
    * @property array of fields to include in search
    */
-  searchFields: SearchFields<State> = ['name', 'code'];
+  searchFields: SearchFields<State> = {
+    default: ['name'],
+    withCountry: {
+      fields: ['name', '$country.name$'],
+      populate: ['country'],
+    },
+  };
 
   constructor(db: SqlService<State>) {
     super(db);
