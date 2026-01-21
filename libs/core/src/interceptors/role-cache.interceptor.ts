@@ -55,8 +55,8 @@ export class RoleCacheInterceptor extends BaseCacheInterceptor {
     if (!baseKey) return undefined;
 
     // Append user role for authenticated requests to enable role-based sharing
-    if (request.user?.role) {
-      baseKey = `${baseKey}:role:${request.user.role}`;
+    if (request.user?.role_id) {
+      baseKey = `${baseKey}:role:${request.user.role_id}`;
     }
 
     void super.setKeyTag(context, baseKey);

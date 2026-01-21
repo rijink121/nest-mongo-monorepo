@@ -1,31 +1,38 @@
 import { SqlSchema } from '@lib/sql/utils/schema';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@shared/definitions/role.enum';
+import { Role } from '@shared/modules/role/entities/role.entity';
 import { hashSync } from 'bcrypt';
 import {
   IsBoolean,
   IsEmail,
-  IsEnum,
+  IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
-import { BeforeSave, Column, DataType, Table } from 'sequelize-typescript';
+import {
+  BeforeSave,
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  Table,
+} from 'sequelize-typescript';
 
 @Table
 export class User extends SqlSchema {
-  @Column({
-    type: DataType.ENUM(...Object.values(Role)),
-    defaultValue: Role.User,
-  })
+  @ForeignKey(() => Role)
+  @Column
   @ApiProperty({
-    enum: Role,
-    description: 'Role',
-    example: Role.User,
+    description: 'Role ID',
+    example: 1,
   })
-  @IsEnum(Role)
-  declare role: Role;
+  @IsNumber()
+  declare role_id: number;
+
+  @BelongsTo(() => Role)
+  declare role?: Role;
 
   @Column({
     type: DataType.STRING,

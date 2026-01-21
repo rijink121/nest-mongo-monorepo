@@ -1,6 +1,7 @@
 import { otp } from '@core/utils';
 import { JobResponse } from '@core/utils/job';
 import { Injectable } from '@nestjs/common';
+import { Role } from '@shared/definitions/role.enum';
 import { SessionData } from '@shared/definitions/session';
 import {
   OtpSession,
@@ -182,7 +183,7 @@ export class RecoveryService {
     try {
       const userWhere: Record<string, unknown> = { id: userId };
       if (isAdmin) {
-        userWhere.role = { $ne: 'Admin' };
+        userWhere.role_id = { $ne: Role.SuperAdmin };
       }
       const { error, data: user } = await this.userService.$db.findOneRecord({
         options: { where: userWhere, allowEmpty: false },

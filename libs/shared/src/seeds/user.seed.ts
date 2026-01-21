@@ -7,7 +7,7 @@ const seed: Seed<User> = {
   action: 'once',
   data: [
     {
-      role: Role.Admin,
+      role_id: Role.SuperAdmin,
       first_name: 'Super',
       last_name: 'Admin',
       email: 'admin@admin.com',
@@ -16,7 +16,7 @@ const seed: Seed<User> = {
       password: '123456',
     },
     {
-      role: Role.User,
+      role_id: Role.Driver,
       first_name: 'Test',
       last_name: 'User',
       email: 'user@user.com',

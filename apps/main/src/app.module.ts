@@ -9,10 +9,9 @@ import { JwtAuthModule } from '@shared/modules/auth/jwt-auth/jwt-auth.module';
 import { LocalAuthModule } from '@shared/modules/auth/local-auth/local-auth.module';
 import { RecoveryModule } from '@shared/modules/auth/recovery/recovery.module';
 import { TokenAuthModule } from '@shared/modules/auth/token-auth/token-auth.module';
-import { BookModule } from '@shared/modules/book/book.module';
 import { CityRouteModule } from '@shared/modules/city/city-route.module';
 import { CountryRouteModule } from '@shared/modules/country/country-route.module';
-import { ProductRouteModule } from '@shared/modules/product/product-route.module';
+import { RoleRouteModule } from '@shared/modules/role/role-route.module';
 import { SessionModule } from '@shared/modules/session/session.module';
 import { StateRouteModule } from '@shared/modules/state/state-route.module';
 import { UserRouteModule } from '@shared/modules/user/user-route.module';
@@ -37,13 +36,12 @@ import config from './config';
     JwtAuthModule,
     TokenAuthModule,
     RecoveryModule,
-    ProductRouteModule,
+    RoleRouteModule,
     UserRouteModule,
     CountryRouteModule,
     StateRouteModule,
     CityRouteModule,
     SessionModule,
-    BookModule,
   ],
   controllers: [AppController],
   providers: [AppService],

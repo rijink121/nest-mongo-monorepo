@@ -42,40 +42,40 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { I18n, I18nContext } from 'nestjs-i18n';
-import { BookService } from './book.service';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
-import { Book } from './entities/book.entity';
+import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
+import { Role } from './entities/role.entity';
+import { RoleService } from './role.service';
 
 // Entity name in snake_case for consistent API routes and documentation
-const entity = snakeCase(Book.name);
+const entity = snakeCase(Role.name);
 
 @ApiTags(entity)
 @ApiBearerAuth()
 @ApiErrorResponses()
-@ApiExtraModels(Book)
+@ApiExtraModels(Role)
 @Cache()
 @Controller(entity)
 @Public()
-export class BookController {
-  constructor(private readonly bookService: BookService) {}
+export class RoleController {
+  constructor(private readonly roleService: RoleService) {}
 
   /**
    * Create a new entity document
    */
   @Post()
   @ApiOperation({ summary: `Create new ${entity}` })
-  @ResponseCreated(Book)
+  @ResponseCreated(Role)
   async create(
     @Owner() owner: OwnerDto,
-    @Body() createBookDto: CreateBookDto,
+    @Body() createRoleDto: CreateRoleDto,
     @Query() query: ApiQueryCreate,
     @I18n() i18n: I18nContext,
   ) {
-    const { error, data } = await this.bookService.create({
+    const { error, data } = await this.roleService.create({
       owner,
       action: 'create',
-      body: { ...createBookDto },
+      body: { ...createRoleDto },
       payload: { ...query },
     });
 
@@ -96,19 +96,19 @@ export class BookController {
    */
   @Put(':id')
   @ApiOperation({ summary: `Update ${entity} using id` })
-  @ResponseUpdated(Book)
+  @ResponseUpdated(Role)
   async update(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateBookDto: UpdateBookDto,
+    @Body() updateRoleDto: UpdateRoleDto,
     @Query() query: ApiQueryUpdate,
     @I18n() i18n: I18nContext,
   ) {
-    const { error, data } = await this.bookService.update({
+    const { error, data } = await this.roleService.update({
       owner,
       action: 'update',
       id,
-      body: { ...updateBookDto },
+      body: { ...updateRoleDto },
       payload: { ...query },
     });
 
@@ -134,14 +134,14 @@ export class BookController {
    */
   @Get()
   @ApiOperation({ summary: `Get all ${pluralizeString(entity)}` })
-  @ResponseGetAll(Book)
+  @ResponseGetAll(Role)
   async findAll(
     @Owner() owner: OwnerDto,
     @Query() query: ApiQueryGetAll,
     @I18n() i18n: I18nContext,
   ) {
     const { error, data, offset, limit, count } =
-      await this.bookService.findAll({
+      await this.roleService.findAll({
         owner,
         action: 'findAll',
         payload: { ...query },
@@ -173,7 +173,7 @@ export class BookController {
     @Query() query: ApiQueryCountAll,
     @I18n() i18n: I18nContext,
   ) {
-    const { error, count } = await this.bookService.getCount({
+    const { error, count } = await this.roleService.getCount({
       owner,
       action: 'getCount',
       payload: { ...query },
@@ -195,13 +195,13 @@ export class BookController {
    */
   @Get('find')
   @ApiOperation({ summary: `Find one ${entity}` })
-  @ResponseGetOne(Book)
+  @ResponseGetOne(Role)
   async findOne(
     @Owner() owner: OwnerDto,
     @Query() query: ApiQueryGetOne,
     @I18n() i18n: I18nContext,
   ) {
-    const { error, data } = await this.bookService.findOne({
+    const { error, data } = await this.roleService.findOne({
       owner,
       action: 'findOne',
       payload: { ...query },
@@ -228,14 +228,14 @@ export class BookController {
    */
   @Get(':id')
   @ApiOperation({ summary: `Find ${entity} using id` })
-  @ResponseGetOne(Book)
+  @ResponseGetOne(Role)
   async findById(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,
     @Query() query: ApiQueryGetById,
     @I18n() i18n: I18nContext,
   ) {
-    const { error, data } = await this.bookService.findById({
+    const { error, data } = await this.roleService.findById({
       owner,
       action: 'findById',
       id,
@@ -263,14 +263,14 @@ export class BookController {
    */
   @Delete(':id')
   @ApiOperation({ summary: `Delete ${entity} using id` })
-  @ResponseDeleted(Book)
+  @ResponseDeleted(Role)
   async delete(
     @Owner() owner: OwnerDto,
     @Param('id', ParseIntPipe) id: number,
     @Query() query: ApiQueryDelete,
     @I18n() i18n: I18nContext,
   ) {
-    const { error, data } = await this.bookService.delete({
+    const { error, data } = await this.roleService.delete({
       owner,
       action: 'delete',
       id,

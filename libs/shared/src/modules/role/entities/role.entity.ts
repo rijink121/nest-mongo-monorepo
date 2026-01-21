@@ -4,11 +4,11 @@ import { IsString } from 'class-validator';
 import { Column, Table } from 'sequelize-typescript';
 
 @Table
-export class Book extends SqlSchema {
+export class Role extends SqlSchema {
   @Column
   @ApiProperty({
-    description: 'Book Name',
-    example: 'Harry Potter',
+    description: 'Role Name',
+    example: 'Admin',
   })
   @IsString()
   declare name: string;
