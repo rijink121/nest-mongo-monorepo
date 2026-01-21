@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import type { Includeable } from 'sequelize';
 import { DeletePayload, ReadPayload, WritePayload } from './decorators/payload';
 import { SqlService } from './sql.service';
 import type { SqlJob } from './utils/job';
@@ -13,9 +14,13 @@ import {
 import { SqlSchema } from './utils/schema';
 
 export type SearchField<M> = keyof M | string;
+export type SearchFieldWithPopulate<M> = {
+  fields: SearchField<M>[];
+  populate: Includeable[];
+};
 export type SearchFields<M> =
   | SearchField<M>[]
-  | Record<string, SearchField<M>[]>;
+  | Record<string, SearchField<M>[] | SearchFieldWithPopulate<M>>;
 
 export class ModelService<M extends SqlSchema> {
   /**
@@ -23,6 +28,12 @@ export class ModelService<M extends SqlSchema> {
    * @property array of fields to include in search
    */
   searchFields: SearchFields<M> = [];
+
+  /**
+   * searchPopulate
+   * @property array of associations to include for search
+   */
+  searchPopulate: Includeable[] = [];
 
   /**
    * @getter $db - Get database service instance

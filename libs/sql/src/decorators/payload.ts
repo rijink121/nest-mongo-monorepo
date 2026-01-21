@@ -6,7 +6,11 @@ import {
 import { BadRequestException } from '@nestjs/common';
 import { isObject } from 'class-validator';
 import { IncludeOptions, Op, Order, WhereOptions } from 'sequelize';
-import { ModelService, SearchField } from '../model.service';
+import {
+  ModelService,
+  SearchField,
+  SearchFieldWithPopulate,
+} from '../model.service';
 import {
   buildPopulateTree,
   mapOperatorToQuery,
@@ -118,6 +122,7 @@ export const ReadPayload = <M extends SqlSchema>(
       select: payload?.select,
       where: payload?.where,
       populate: payload?.populate,
+      scope: payload?.scope,
     };
 
     // ============================================
@@ -130,11 +135,33 @@ export const ReadPayload = <M extends SqlSchema>(
     // ============================================
     // 3. Process where conditions and search
     // ============================================
-    const where: WhereOptions<M> = readPayload.where
-      ? (mapOperatorToQuery(readPayload.where) as WhereOptions<M>)
-      : {};
+    const where: WhereOptions<M> = { [Op.and]: [] };
+    const whereAnd = where[Op.and] as WhereOptions<M>[];
+    if (readPayload.where) {
+      whereAnd.push(mapOperatorToQuery(readPayload.where) as WhereOptions<M>);
+    }
 
-    // Process search functionality
+    // ============================================
+    // 4. Process populate options
+    // ============================================
+    let include: IncludeOptions[] = [];
+
+    // Build populate tree from explicit populate fields
+    if (readPayload.populate) {
+      include = buildPopulateTree(readPayload.populate);
+    }
+
+    // Merge populate options from field selection
+    if (
+      attributesWithPopulate.include &&
+      attributesWithPopulate.include.length > 0
+    ) {
+      include = [...include, ...attributesWithPopulate.include];
+    }
+
+    // ============================================
+    // 5. Process search functionality
+    // ============================================
     if (readPayload.search && this.searchFields) {
       // Determine search scope and key
       const searchScope = Array.isArray(readPayload.search)
@@ -164,13 +191,11 @@ export const ReadPayload = <M extends SqlSchema>(
       // Get the appropriate search fields based on scope
       const searchFields: SearchField<M>[] =
         isObject(this.searchFields) && this.searchFields[searchScope]
-          ? (this.searchFields[searchScope] as SearchField<M>[])
+          ? Array.isArray(this.searchFields[searchScope])
+            ? (this.searchFields[searchScope] as SearchField<M>[])
+            : (this.searchFields[searchScope] as SearchFieldWithPopulate<M>)
+                .fields
           : (this.searchFields as SearchField<M>[]);
-
-      // Apply search filters
-      if (!where[Op.and] || !Array.isArray(where[Op.and])) {
-        where[Op.and] = [];
-      }
 
       // Escape special regex characters for safe pattern matching
       const escapedSearchKey = searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -183,32 +208,37 @@ export const ReadPayload = <M extends SqlSchema>(
           }) as WhereOptions<M>,
       );
 
-      (where[Op.and] as WhereOptions<M>[]).push({ [Op.or]: searchConditions });
-    }
+      whereAnd.push({ [Op.or]: searchConditions });
 
-    // ============================================
-    // 5. Process populate options
-    // ============================================
-    let include: IncludeOptions[] = [];
+      // Handle additional population requirements for specific search scopes
+      const searchPopulate =
+        isObject(this.searchFields) && isObject(this.searchFields[searchScope])
+          ? (this.searchFields[searchScope] as SearchFieldWithPopulate<M>)
+              .populate
+          : this.searchPopulate;
 
-    // Build populate tree from explicit populate fields
-    if (readPayload.populate) {
-      include = buildPopulateTree(readPayload.populate);
-    }
-
-    // Merge populate options from field selection
-    if (
-      attributesWithPopulate.include &&
-      attributesWithPopulate.include.length > 0
-    ) {
-      include = [...include, ...attributesWithPopulate.include];
+      if (searchPopulate.length > 0) {
+        for (let index = 0; index < searchPopulate.length; index++) {
+          const association = searchPopulate[index];
+          if (isObject(association)) {
+            include.push(association as IncludeOptions);
+          } else if (typeof association === 'string') {
+            const associationIndex = include.findIndex(
+              (x) => (x.association || x) === association,
+            );
+            if (associationIndex === -1) {
+              include.push({ association, include: [] });
+            }
+          }
+        }
+      }
     }
 
     // ============================================
     // 6. Construct final SqlDB options
     // ============================================
     job.options = {
-      where: Object.keys(where).length > 0 ? where : undefined,
+      where,
       include,
       order: readPayload.sort as Order,
       attributes:
