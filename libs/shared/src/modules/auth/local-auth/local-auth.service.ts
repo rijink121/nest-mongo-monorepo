@@ -1,7 +1,6 @@
 import { OwnerDto } from '@core/types/owner';
 import { JobResponse } from '@core/utils/job';
 import { Inject, Injectable } from '@nestjs/common';
-import { Role } from '@shared/definitions/role.enum';
 import { SessionData } from '@shared/definitions/session';
 import { SessionService } from '@shared/modules/session/session.service';
 import { User } from '@shared/modules/user/entities/user.entity';
@@ -79,7 +78,6 @@ export class LocalAuthService {
           attributes: { include: ['password'] }, // Include password field in query result
           where: {
             email: username,
-            role: this.appId === 'main' ? Role.Admin : Role.User,
           },
           allowEmpty: true, // Don't throw error if user not found
         },
